@@ -48,7 +48,11 @@ public class MainActivity extends AppCompatActivity {
 
         jsonApi = retrofit.create(JsonApi.class);
 
-        createPost();
+        //verschiedene Post Konstruktoren
+        Post p = new Post("zufgjhjg", "lololol");
+        Post pp = new Post("hhha", "fjjfj", "fdjfjdf");
+
+        createPost(pp);
 
         /* DAS WAR FÜR GET-CALL
         Call<List<Post>> call = jsonApi.getPosts();
@@ -81,9 +85,8 @@ public class MainActivity extends AppCompatActivity {
         */
     }
 
-    private void createPost() {
+    private void createPost(Post post) {
         // die Werte hier sollten vom User-Input eingefügt werden, das senden wir zum Server
-        Post post = new Post("zufgjhjg", "lololol");
 
         Call<Post> call = jsonApi.createPost(post);
 
