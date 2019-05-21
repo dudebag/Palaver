@@ -2,6 +2,8 @@ package com.dudebag.palaver;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class Post {
 
     @SerializedName("Username")
@@ -19,8 +21,11 @@ public class Post {
     @SerializedName("Info")
     private String info;
 
+    //@SerializedName("Data")
+    //private String data [];
+
     @SerializedName("Data")
-    private String[] data;
+    private List<String> data;
 
     @SerializedName("PushToken")
     private String pushToken;
@@ -69,6 +74,33 @@ public class Post {
         this.password = password;
     }
 
+    public void setData(List<String> data) {
+        this.data = data;
+    }
+
+    public void addData(String name) {
+        data.add(name);
+    }
+
+    /*public void setData(String[] data) {
+        this.data = data;
+    }*/
+
+    /*public void addData(String name) {
+        String list [] = new String[getData().length];
+        for (int i = 0; i < list.length; i++){
+            if (list[i] == null){
+                list[i] = name;
+                setData(list);
+                return;
+            }
+        }
+    }*/
+
+    /*public int getLength() {
+        return data.length;
+    }*/
+
     public String getUsername() {
         return username;
     }
@@ -85,8 +117,16 @@ public class Post {
         return info;
     }
 
-    public String[] getData() {
+    /*public String getData(int i) {
+        return data[i];
+    }*/
+
+    public List<String> getData() {
         return data;
+    }
+
+    public String getDataDetail(int i) {
+        return data.get(i);
     }
 
     public String getNewPassword() { return newPassword; }

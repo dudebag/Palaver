@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         //Gson Konverter einrichten
         jsonApi = retrofit.create(JsonApi.class);
 
-        test = findViewById(R.id.text_view_result);
+        //test = findViewById(R.id.text_view_result);
 
         //Eingabefelder zuweisen
         et_benutzername = findViewById(R.id.log_Benutzername);
@@ -74,9 +74,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 fillForm();
-                /*if (!validateForm()) {
+                if (!validateForm()) {
                     return;
-                }*/
+                }
                 Post post = new Post("a", "b");
                 post.setUsername(benutzername);
                 post.setPassword(passwort);
@@ -114,28 +114,34 @@ public class LoginActivity extends AppCompatActivity {
                     intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
                     intent.putExtra(EXTRA_PASSWORT, passwort);
                     startActivity(intent);
+                    //return;
                 }
                 //Passwort nicht korrekt
                 else if (responsePost.getMsgType() == 0 && responsePost.getInfo() == error4){
                     Toast.makeText(getApplicationContext(), error4, Toast.LENGTH_LONG).show();
+                    //Passwort-Feld wird bei falscher Eingabe gelöscht
+                    et_passwort.setText("");
                     return;
                 }
                 //Benutzer existiert nicht
                 else if (responsePost.getMsgType() == 0 && responsePost.getInfo() == error5){
                     Toast.makeText(getApplicationContext(), error5, Toast.LENGTH_LONG).show();
+                    //Passwort-Feld wird bei falscher Eingabe gelöscht
                     et_passwort.setText("");
                     return;
                 }
 
                 //WIESO LANDE ICH HIER
-
+                /*
                 String text = "";
                 text += "Code: " + response.code() + "\n";
                 text += "MsgType: " + responsePost.getMsgType() + "\n";
                 text += "Info: " + responsePost.getInfo() + "\n";
-                text += "Data: " + responsePost.getData() + "\n\n";
+                text += "Data: " + responsePost.getData() + "\n\n"; */
 
-                test.setText(text);
+                //Toast.makeText(getApplicationContext(), "easy going", Toast.LENGTH_LONG).show();
+
+                //test.setText(text);
                 return;
                 //Toast.makeText(getApplicationContext(), "VORBEI", Toast.LENGTH_LONG).show();
 
@@ -144,6 +150,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
                 Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                return;
             }
         });
 

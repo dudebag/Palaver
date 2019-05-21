@@ -22,11 +22,11 @@ public class RegisterActivity extends AppCompatActivity {
     private Button buttonRegister;
     private Button buttonLogin;
 
-    protected EditText et_benutzername;
-    protected EditText et_passwort;
+    EditText et_benutzername;
+    EditText et_passwort;
 
-    protected String benutzername;
-    protected String passwort;
+    String benutzername;
+    String passwort;
 
     String error1 = "Error Code: ";
     String error2 = "Benutzer existiert bereits";

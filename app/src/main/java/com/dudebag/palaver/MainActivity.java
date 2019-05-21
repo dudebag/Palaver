@@ -4,9 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,6 +32,15 @@ public class MainActivity extends AppCompatActivity {
     Post responsePost;
 
     TextView textViewResult;
+
+    ArrayList<Friend> friendList;
+
+    String friends [];
+
+    String error1 = "Freund dem System nicht bekannt";
+    String error2 = "Freund bereits auf der Liste";
+
+    String msg1 = "Freund hinzugefügt";
 
 
     @Override
@@ -49,14 +63,75 @@ public class MainActivity extends AppCompatActivity {
 
         textViewResult = findViewById(R.id.text_view_result);
 
+        friendList = new ArrayList<>();
+
         Post post = new Post(benutzername, passwort);
-        //Post post = new Post(benutzername, passwort, "bello");
+        //Post post = new Post(benutzername, passwort, "hans2");
 
         getFriends(post);
         //addFriends(post);
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.top_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = new Intent(this.getApplicationContext(), AddFriendsActivity.class);
+        switch (item.getItemId()){
+            case R.id.button1:
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    private void getFriends(Post post){
+        Call<Post> call = jsonApi.getFriends(post);
+
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Fehler aufgetaucht", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                responsePost = response.body();
+
+                String text = "";
+                text += "Code: " + response.code() + "\n";
+                text += "MsgType: " + responsePost.getMsgType() + "\n";
+                text += "Info: " + responsePost.getInfo() + "\n";
+                text += "Data: ";
+
+                for (int i = 0; i < responsePost.getData().size(); i++) {
+                    friendList.add(new Friend(responsePost.getDataDetail(i)));
+                    text += friendList.get(i).getName() + "\n";
+                }
+
+                textViewResult.setText(text);
+                return;
+
+
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+
+                //textViewResult.setText(t.getMessage());
+                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 
     private void getMessages(Post post){
         Call<Post> call = jsonApi.getMessages(post);
@@ -81,14 +156,14 @@ public class MainActivity extends AppCompatActivity {
 
                 String[] friends;
                         //= new String[responsePost.getData().length];
-                friends = responsePost.getData();
+                //friends = responsePost.getData();
 
-                for (int i=0; i< friends.length; i++) {
+                /*for (int i=0; i< friends.length; i++) {
                     text += friends[i] + "\n";
-                }
+                }*/
 
 
-                textViewResult.setText(text);
+                //textViewResult.setText(text);
                 return;
 
             }
@@ -100,38 +175,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void getFriends(Post post){
-        Call<Post> call = jsonApi.getFriends(post);
 
-        call.enqueue(new Callback<Post>() {
-            @Override
-            public void onResponse(Call<Post> call, Response<Post> response) {
-
-                if (!response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Fehler aufgetaucht", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                responsePost = response.body();
-
-                String text = "";
-                text += "Code: " + response.code() + "\n";
-                text += "MsgType: " + responsePost.getMsgType() + "\n";
-                text += "Info: " + responsePost.getInfo() + "\n";
-                text += "Data: " + responsePost.getData() + "\n\n";
-
-                textViewResult.setText(text);
-                return;
-            }
-
-            @Override
-            public void onFailure(Call<Post> call, Throwable t) {
-
-                textViewResult.setText(t.getMessage());
-                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
 
     private void addFriends(Post post) {
         Call<Post> call = jsonApi.addFriends(post);
@@ -151,17 +195,33 @@ public class MainActivity extends AppCompatActivity {
                 text += "Code: " + response.code() + "\n";
                 text += "MsgType: " + responsePost.getMsgType() + "\n";
                 text += "Info: " + responsePost.getInfo() + "\n";
-                text += "Data: " + responsePost.getData() + "\n\n";
+                //text += "Data: " + responsePost.getData() + "\n\n";
 
                 textViewResult.setText(text);
-                return;
+
+                //Freund hinzugefügt
+                if (responsePost.getMsgType() == 1){
+                    Toast.makeText(getApplicationContext(), msg1, Toast.LENGTH_LONG).show();
+                    return;
+                }
+                //Freund dem System nicht bekannt
+                else if (responsePost.getMsgType() == 0 && responsePost.getInfo() == error1){
+                    Toast.makeText(getApplicationContext(), error1, Toast.LENGTH_LONG).show();
+                    return;
+                }
+                //Freund bereits auf der Liste
+                else {
+                    Toast.makeText(getApplicationContext(), error2, Toast.LENGTH_LONG).show();
+                    return;
+                }
+
 
             }
 
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
 
-                textViewResult.setText(t.getMessage());
+                //textViewResult.setText(t.getMessage());
                 Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 return;
             }
