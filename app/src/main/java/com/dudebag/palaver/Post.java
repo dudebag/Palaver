@@ -20,7 +20,7 @@ public class Post {
     private String info;
 
     @SerializedName("Data")
-    private String data;
+    private String[] data;
 
     @SerializedName("PushToken")
     private String pushToken;
@@ -40,19 +40,34 @@ public class Post {
     @SerializedName("Friend")
     private String friend;
 
-
+    //processRegistration(), processLogin(), getFriends()
     public Post(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    public Post(String username, String password, String newPassword) {
+    //addFriends(), removeFriends()
+    public Post(String username, String password, String friend) {
         this.username = username;
         this.password = password;
-        this.newPassword = newPassword;
+        this.friend = friend;
     }
 
+    //getMessages()
+    /*public Post(String username, String password, String recipient) {
+        this.username = username;
+        this.password = password;
+        this.recipient = recipient;
+    }*/
 
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public String getUsername() {
         return username;
@@ -70,7 +85,7 @@ public class Post {
         return info;
     }
 
-    public String getData() {
+    public String[] getData() {
         return data;
     }
 

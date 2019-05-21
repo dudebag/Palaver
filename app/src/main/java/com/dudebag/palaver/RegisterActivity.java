@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import retrofit2.Call;
@@ -16,40 +15,38 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class LoginActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
 
+
+
+    private Button buttonRegister;
     private Button buttonLogin;
 
-    public static final String EXTRA_BENUTZERNAME = "com.dudebag.palaver.EXTRA_TEXT";
-    public static final String EXTRA_PASSWORT = "com.dudebag.palaver.EXTRA_PASSWORT";
+    protected EditText et_benutzername;
+    protected EditText et_passwort;
 
-    EditText et_benutzername;
-    EditText et_passwort;
-
-    String benutzername;
-    String passwort;
+    protected String benutzername;
+    protected String passwort;
 
     String error1 = "Error Code: ";
-    //String error2 = "Benutzer existiert bereits";
-    String error3 = "Benutzername oder Passwort falsch";
-    String error4 = "Passwort nicht korrekt";
-    String error5 = "Benutzer existiert nicht";
+    String error2 = "Benutzer existiert bereits";
 
-    String msg1 = "Benutzer erfolgreich validiert";
+    //String msg1 = "Benutzer erfolgreich validiert";
     String msg2 = "Benutzername fehlt";
     String msg3 = "Passwort fehlt";
     String msg4 = "Benutzername und Passwort fehlen";
+    String msg5 = "Benutzer erfolgreich registriert";
 
     JsonApi jsonApi;
 
     Post responsePost;
 
-    TextView test;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
 
         //Retrofit einrichten
         Retrofit retrofit = new Retrofit.Builder()
@@ -60,41 +57,53 @@ public class LoginActivity extends AppCompatActivity {
         //Gson Konverter einrichten
         jsonApi = retrofit.create(JsonApi.class);
 
-        test = findViewById(R.id.text_view_result);
-
         //Eingabefelder zuweisen
-        et_benutzername = findViewById(R.id.log_Benutzername);
-        et_passwort = findViewById(R.id.log_Passwort);
+        et_benutzername = findViewById(R.id.reg_Benutzername);
+        et_passwort = findViewById(R.id.reg_Passwort);
 
 
 
-        //Login Button einrichten
-        buttonLogin = findViewById(R.id.log_Login);
-        buttonLogin.setOnClickListener(new View.OnClickListener() {
+        //Registrieren Button einrichten
+        buttonRegister = findViewById(R.id.reg_Register);
+        buttonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fillForm();
                 /*if (!validateForm()) {
-                    return;
+                    buttonRegister.setEnabled(false);
+                }
+                else {
+                    buttonRegister.setEnabled(true);
                 }*/
+                if (!validateForm()) {
+                    return;
+                }
                 Post post = new Post("a", "b");
                 post.setUsername(benutzername);
                 post.setPassword(passwort);
-                processLogin(post);
+                processRegistration(post);
 
             }
         });
 
-
-
-
+        //Zum Login Button einrichten
+        buttonLogin = findViewById(R.id.reg_Login);
+        buttonLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
-    private void processLogin(Post post) {
 
-        final Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
 
-        Call<Post> call = jsonApi.processLogin(post);
+    private void processRegistration(Post post) {
+
+        final Intent intent = new Intent(this.getApplicationContext(), LoginActivity.class);
+
+        Call<Post> call = jsonApi.processRegistration(post);
 
         call.enqueue(new Callback<Post>() {
             @Override
@@ -108,36 +117,13 @@ public class LoginActivity extends AppCompatActivity {
 
                 responsePost = response.body();
 
-                //Benutzer erfolgreich validiert
                 if (responsePost.getMsgType() == 1) {
-                    Toast.makeText(getApplicationContext(), msg1, Toast.LENGTH_LONG).show();
-                    intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
-                    intent.putExtra(EXTRA_PASSWORT, passwort);
+                    Toast.makeText(getApplicationContext(), msg5, Toast.LENGTH_LONG).show();
                     startActivity(intent);
                 }
-                //Passwort nicht korrekt
-                else if (responsePost.getMsgType() == 0 && responsePost.getInfo() == error4){
-                    Toast.makeText(getApplicationContext(), error4, Toast.LENGTH_LONG).show();
-                    return;
+                else {
+                    Toast.makeText(getApplicationContext(), error2, Toast.LENGTH_LONG).show();
                 }
-                //Benutzer existiert nicht
-                else if (responsePost.getMsgType() == 0 && responsePost.getInfo() == error5){
-                    Toast.makeText(getApplicationContext(), error5, Toast.LENGTH_LONG).show();
-                    et_passwort.setText("");
-                    return;
-                }
-
-                //WIESO LANDE ICH HIER
-
-                String text = "";
-                text += "Code: " + response.code() + "\n";
-                text += "MsgType: " + responsePost.getMsgType() + "\n";
-                text += "Info: " + responsePost.getInfo() + "\n";
-                text += "Data: " + responsePost.getData() + "\n\n";
-
-                test.setText(text);
-                return;
-                //Toast.makeText(getApplicationContext(), "VORBEI", Toast.LENGTH_LONG).show();
 
             }
 
@@ -173,4 +159,6 @@ public class LoginActivity extends AppCompatActivity {
             return true;
         }
     }
+
+
 }

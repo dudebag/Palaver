@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 import java.util.Timer;
@@ -18,9 +19,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView textViewResult;
+    protected String benutzername;
+    protected String passwort;
 
     JsonApi jsonApi;
+
+    Post responsePost;
+
+    TextView textViewResult;
 
 
     @Override
@@ -28,91 +34,136 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Timer für Splash-Screen
-        /*new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-            }
-        }, 4000);*/
+        Intent intent = getIntent();
+        benutzername = intent.getStringExtra(LoginActivity.EXTRA_BENUTZERNAME);
+        passwort = intent.getStringExtra(LoginActivity.EXTRA_PASSWORT);
 
-
-
-
-        textViewResult = findViewById(R.id.text_view_result);
-
+        //Retrofit einrichten
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://palaver.se.paluno.uni-due.de")
+                .baseUrl("http://palaver.se.paluno.uni-due.de/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
+        //Gson Konverter einrichten
         jsonApi = retrofit.create(JsonApi.class);
 
-        //verschiedene Post Konstruktoren
-        Post p = new Post("zufgjhjg", "lololol");
-        Post pp = new Post("hhha", "fjjfj", "fdjfjdf");
+        textViewResult = findViewById(R.id.text_view_result);
 
-        createPost(pp);
+        Post post = new Post(benutzername, passwort);
+        //Post post = new Post(benutzername, passwort, "bello");
 
-        /* DAS WAR FÜR GET-CALL
-        Call<List<Post>> call = jsonApi.getPosts();
+        getFriends(post);
+        //addFriends(post);
 
-        call.enqueue(new Callback<List<Post>>() {
-            @Override
-            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
-
-                if (!response.isSuccessful()) {
-                    textViewResult.setText("Code: " + response.code());
-                    return;
-                }
-
-                List<Post> posts = response.body();
-
-                for (Post post : posts) {
-                    String content = "";
-                    content += "Username: " + post.getUsername() + "\n";
-                    content += "Password: " + post.getPassword() + "\n\n";
-
-                    textViewResult.append(content);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Post>> call, Throwable t) {
-                textViewResult.setText(t.getMessage());
-            }
-        });
-        */
     }
 
-    private void createPost(Post post) {
-        // die Werte hier sollten vom User-Input eingefügt werden, das senden wir zum Server
 
-        Call<Post> call = jsonApi.createPost(post);
+    private void getMessages(Post post){
+        Call<Post> call = jsonApi.getMessages(post);
+        //2--Toast.makeText(getApplicationContext(), "rip1", Toast.LENGTH_LONG).show();
+
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+
+                if (!response.isSuccessful()){
+                    Toast.makeText(getApplicationContext(), "rip2", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                Toast.makeText(getApplicationContext(), "rip3", Toast.LENGTH_LONG).show();
+                responsePost = response.body();
+
+                String text = "";
+                text += "Code: " + response.code() + "\n";
+                text += "MsgType: " + responsePost.getMsgType() + "\n";
+                text += "Info: " + responsePost.getInfo() + "\n";
+                text += "Data: " + "\n";
+
+                String[] friends;
+                        //= new String[responsePost.getData().length];
+                friends = responsePost.getData();
+
+                for (int i=0; i< friends.length; i++) {
+                    text += friends[i] + "\n";
+                }
+
+
+                textViewResult.setText(text);
+                return;
+
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "ripTODES", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void getFriends(Post post){
+        Call<Post> call = jsonApi.getFriends(post);
 
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
 
                 if (!response.isSuccessful()) {
-                    textViewResult.setText("Code: " + response.code());
+                    Toast.makeText(getApplicationContext(), "Fehler aufgetaucht", Toast.LENGTH_LONG).show();
                     return;
                 }
 
-                Post postResponse = response.body();
+                responsePost = response.body();
 
-                String content = "";
-                content += "Code: " + response.code() + "\n";
-                content += "MsgType: " + postResponse.getMsgType() + "\n";
-                content += "Info: " + postResponse.getInfo() + "\n";
-                content += "Data: " + postResponse.getData() + "\n\n";
+                String text = "";
+                text += "Code: " + response.code() + "\n";
+                text += "MsgType: " + responsePost.getMsgType() + "\n";
+                text += "Info: " + responsePost.getInfo() + "\n";
+                text += "Data: " + responsePost.getData() + "\n\n";
 
-                textViewResult.setText(content);
+                textViewResult.setText(text);
+                return;
             }
 
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
+
                 textViewResult.setText(t.getMessage());
+                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void addFriends(Post post) {
+        Call<Post> call = jsonApi.addFriends(post);
+
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Fehler aufgetaucht", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                responsePost = response.body();
+
+                String text = "";
+                text += "Code: " + response.code() + "\n";
+                text += "MsgType: " + responsePost.getMsgType() + "\n";
+                text += "Info: " + responsePost.getInfo() + "\n";
+                text += "Data: " + responsePost.getData() + "\n\n";
+
+                textViewResult.setText(text);
+                return;
+
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+
+                textViewResult.setText(t.getMessage());
+                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                return;
             }
         });
     }
