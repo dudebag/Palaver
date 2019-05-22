@@ -18,10 +18,10 @@ allprojects {
     repositories {
         google()
         jcenter()
-        //DAS WAR ICH
-        /*maven {
+
+        maven {
             url "https://maven.google.com"
-        }*/
+        }
         
     }
 }

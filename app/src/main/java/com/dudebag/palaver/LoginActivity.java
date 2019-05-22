@@ -99,7 +99,6 @@ public class LoginActivity extends AppCompatActivity {
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
-                //Toast.makeText(getApplicationContext(), "Phase 1", Toast.LENGTH_LONG).show();
 
                 if(!response.isSuccessful()) {
                     Toast.makeText(getApplicationContext(), error1 + response.code(), Toast.LENGTH_LONG).show();
@@ -114,7 +113,6 @@ public class LoginActivity extends AppCompatActivity {
                     intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
                     intent.putExtra(EXTRA_PASSWORT, passwort);
                     startActivity(intent);
-                    //return;
                 }
                 //Passwort nicht korrekt
                 else if (responsePost.getMsgType() == 0 && responsePost.getInfo() == error4){
@@ -131,19 +129,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                //WIESO LANDE ICH HIER
-                /*
-                String text = "";
-                text += "Code: " + response.code() + "\n";
-                text += "MsgType: " + responsePost.getMsgType() + "\n";
-                text += "Info: " + responsePost.getInfo() + "\n";
-                text += "Data: " + responsePost.getData() + "\n\n"; */
-
-                //Toast.makeText(getApplicationContext(), "easy going", Toast.LENGTH_LONG).show();
-
-                //test.setText(text);
                 return;
-                //Toast.makeText(getApplicationContext(), "VORBEI", Toast.LENGTH_LONG).show();
 
             }
 

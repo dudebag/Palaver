@@ -108,8 +108,8 @@ public class RegisterActivity extends AppCompatActivity {
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
-                //Toast.makeText(getApplicationContext(), "Phase 1", Toast.LENGTH_LONG).show();
 
+                //wenn nicht successfull
                 if(!response.isSuccessful()) {
                     Toast.makeText(getApplicationContext(), error1 + response.code(), Toast.LENGTH_LONG).show();
                     return;

@@ -1,6 +1,8 @@
 package com.dudebag.palaver;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +26,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+
+
     protected String benutzername;
     protected String passwort;
 
@@ -31,11 +35,11 @@ public class MainActivity extends AppCompatActivity {
 
     Post responsePost;
 
-    TextView textViewResult;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     ArrayList<Friend> friendList;
-
-    String friends [];
 
     String error1 = "Freund dem System nicht bekannt";
     String error2 = "Freund bereits auf der Liste";
@@ -48,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Benutzername und Passwort wird in Empfang genommen
         Intent intent = getIntent();
         benutzername = intent.getStringExtra(LoginActivity.EXTRA_BENUTZERNAME);
         passwort = intent.getStringExtra(LoginActivity.EXTRA_PASSWORT);
@@ -61,12 +66,10 @@ public class MainActivity extends AppCompatActivity {
         //Gson Konverter einrichten
         jsonApi = retrofit.create(JsonApi.class);
 
-        textViewResult = findViewById(R.id.text_view_result);
-
         friendList = new ArrayList<>();
 
-        Post post = new Post(benutzername, passwort);
-        //Post post = new Post(benutzername, passwort, "hans2");
+        //Post post = new Post(benutzername, passwort);
+        Post post = new Post(benutzername, passwort, "hans2");
 
         getFriends(post);
         //addFriends(post);
@@ -107,18 +110,19 @@ public class MainActivity extends AppCompatActivity {
 
                 responsePost = response.body();
 
-                String text = "";
-                text += "Code: " + response.code() + "\n";
-                text += "MsgType: " + responsePost.getMsgType() + "\n";
-                text += "Info: " + responsePost.getInfo() + "\n";
-                text += "Data: ";
-
                 for (int i = 0; i < responsePost.getData().size(); i++) {
                     friendList.add(new Friend(responsePost.getDataDetail(i)));
-                    text += friendList.get(i).getName() + "\n";
                 }
 
-                textViewResult.setText(text);
+                mRecyclerView = findViewById(R.id.recyclerView);
+                //setHasFixedSize auf true wenn recyclerview immer gleich groß weil performance
+                mRecyclerView.setHasFixedSize(true);
+                mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                mAdapter = new FriendAdapter(friendList);
+
+                mRecyclerView.setLayoutManager(mLayoutManager);
+                mRecyclerView.setAdapter(mAdapter);
+
                 return;
 
 
@@ -126,8 +130,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
-
-                //textViewResult.setText(t.getMessage());
                 Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
@@ -177,6 +179,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+
     private void addFriends(Post post) {
         Call<Post> call = jsonApi.addFriends(post);
 
@@ -191,13 +195,13 @@ public class MainActivity extends AppCompatActivity {
 
                 responsePost = response.body();
 
-                String text = "";
+                /*String text = "";
                 text += "Code: " + response.code() + "\n";
                 text += "MsgType: " + responsePost.getMsgType() + "\n";
                 text += "Info: " + responsePost.getInfo() + "\n";
                 //text += "Data: " + responsePost.getData() + "\n\n";
 
-                textViewResult.setText(text);
+                textViewResult.setText(text);*/
 
                 //Freund hinzugefügt
                 if (responsePost.getMsgType() == 1){
