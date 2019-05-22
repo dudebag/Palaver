@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Palaver</string>
+    <string name="addFriend_activity">Freund hinzufügen</string>
 </resources>
