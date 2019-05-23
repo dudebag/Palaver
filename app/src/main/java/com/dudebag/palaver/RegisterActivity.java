@@ -31,7 +31,6 @@ public class RegisterActivity extends AppCompatActivity {
     String error1 = "Error Code: ";
     String error2 = "Benutzer existiert bereits";
 
-    //String msg1 = "Benutzer erfolgreich validiert";
     String msg2 = "Benutzername fehlt";
     String msg3 = "Passwort fehlt";
     String msg4 = "Benutzername und Passwort fehlen";
@@ -117,12 +116,21 @@ public class RegisterActivity extends AppCompatActivity {
 
                 responsePost = response.body();
 
+                //Benutzer erfolgreich angelegt
                 if (responsePost.getMsgType() == 1) {
                     Toast.makeText(getApplicationContext(), msg5, Toast.LENGTH_LONG).show();
                     startActivity(intent);
+                    return;
                 }
-                else {
+                //Benutzer existiert bereits
+                else if (responsePost.getMsgType() == 0) {
                     Toast.makeText(getApplicationContext(), error2, Toast.LENGTH_LONG).show();
+                    return;
+                }
+                //Random Nachricht vom Server
+                else {
+                    Toast.makeText(getApplicationContext(), error1 + responsePost.getInfo(), Toast.LENGTH_LONG).show();
+                    return;
                 }
 
             }

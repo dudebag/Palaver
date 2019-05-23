@@ -26,10 +26,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String EXTRA_BENUTZERNAME = "com.dudebag.palaver.EXTRA_TEXT";
+    public static final String EXTRA_PASSWORT = "com.dudebag.palaver.EXTRA_PASSWORT";
 
-
-    protected String benutzername;
-    protected String passwort;
+    String benutzername;
+    String passwort;
 
     JsonApi jsonApi;
 
@@ -88,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this.getApplicationContext(), AddFriendsActivity.class);
         switch (item.getItemId()){
             case R.id.button1:
+                intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
+                intent.putExtra(EXTRA_PASSWORT, passwort);
                 startActivity(intent);
                 return true;
             default:
@@ -173,61 +176,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
                 Toast.makeText(getApplicationContext(), "ripTODES", Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-
-
-
-
-    private void addFriends(Post post) {
-        Call<Post> call = jsonApi.addFriends(post);
-
-        call.enqueue(new Callback<Post>() {
-            @Override
-            public void onResponse(Call<Post> call, Response<Post> response) {
-
-                if (!response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Fehler aufgetaucht", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                responsePost = response.body();
-
-                /*String text = "";
-                text += "Code: " + response.code() + "\n";
-                text += "MsgType: " + responsePost.getMsgType() + "\n";
-                text += "Info: " + responsePost.getInfo() + "\n";
-                //text += "Data: " + responsePost.getData() + "\n\n";
-
-                textViewResult.setText(text);*/
-
-                //Freund hinzugefügt
-                if (responsePost.getMsgType() == 1){
-                    Toast.makeText(getApplicationContext(), msg1, Toast.LENGTH_LONG).show();
-                    return;
-                }
-                //Freund dem System nicht bekannt
-                else if (responsePost.getMsgType() == 0 && responsePost.getInfo() == error1){
-                    Toast.makeText(getApplicationContext(), error1, Toast.LENGTH_LONG).show();
-                    return;
-                }
-                //Freund bereits auf der Liste
-                else {
-                    Toast.makeText(getApplicationContext(), error2, Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(Call<Post> call, Throwable t) {
-
-                //textViewResult.setText(t.getMessage());
-                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                return;
             }
         });
     }

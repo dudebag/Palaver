@@ -29,16 +29,16 @@ public class LoginActivity extends AppCompatActivity {
     String benutzername;
     String passwort;
 
-    String error1 = "Error Code: ";
+    final String error1 = "Error Code: ";
     //String error2 = "Benutzer existiert bereits";
-    String error3 = "Benutzername oder Passwort falsch";
-    String error4 = "Passwort nicht korrekt";
-    String error5 = "Benutzer existiert nicht";
+    final String error3 = "Benutzername oder Passwort falsch";
+    final String error4 = "Passwort nicht korrekt";
+    final String error5 = "Benutzer existiert nicht";
 
-    String msg1 = "Benutzer erfolgreich validiert";
-    String msg2 = "Benutzername fehlt";
-    String msg3 = "Passwort fehlt";
-    String msg4 = "Benutzername und Passwort fehlen";
+    final String msg1 = "Benutzer erfolgreich validiert";
+    final String msg2 = "Benutzername fehlt";
+    final String msg3 = "Passwort fehlt";
+    final String msg4 = "Benutzername und Passwort fehlen";
 
     JsonApi jsonApi;
 
@@ -115,17 +115,22 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
                 //Passwort nicht korrekt
-                else if (responsePost.getMsgType() == 0 && responsePost.getInfo() == error4){
+                else if (responsePost.getMsgType() == 0 && responsePost.getInfo().equals(error4)){
                     Toast.makeText(getApplicationContext(), error4, Toast.LENGTH_LONG).show();
                     //Passwort-Feld wird bei falscher Eingabe gelöscht
                     et_passwort.setText("");
                     return;
                 }
                 //Benutzer existiert nicht
-                else if (responsePost.getMsgType() == 0 && responsePost.getInfo() == error5){
+                else if (responsePost.getMsgType() == 0 && responsePost.getInfo().equals(error5)){
                     Toast.makeText(getApplicationContext(), error5, Toast.LENGTH_LONG).show();
                     //Passwort-Feld wird bei falscher Eingabe gelöscht
                     et_passwort.setText("");
+                    return;
+                }
+                //Random Nachricht vom Server
+                else {
+                    Toast.makeText(getApplicationContext(), error1 + responsePost.getInfo(), Toast.LENGTH_LONG).show();
                     return;
                 }
 
