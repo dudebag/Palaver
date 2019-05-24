@@ -2,9 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activityRegister"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_login"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".RegisterActivity">
 
     <LinearLayout
@@ -42,6 +45,7 @@
             android:layout_height="48dp"
             android:layout_marginTop="42dp"
             android:background="@drawable/bg_editext"
+            android:inputType="text"
             android:hint="Benutzername"
             android:paddingLeft="18dp" />
 
@@ -51,6 +55,7 @@
             android:layout_height="48dp"
             android:layout_marginTop="14dp"
             android:background="@drawable/bg_editext"
+            android:inputType="textPassword"
             android:hint="Passwort"
             android:paddingLeft="18dp" />
 

@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     JsonApi jsonApi;
 
+    Post savedPost;
     Post responsePost;
 
     private RecyclerView mRecyclerView;
@@ -69,14 +70,15 @@ public class MainActivity extends AppCompatActivity {
 
         friendList = new ArrayList<>();
 
-        //Post post = new Post(benutzername, passwort);
-        Post post = new Post(benutzername, passwort, "hans2");
+        Post post = new Post(benutzername, passwort);
+
+        savedPost = post;
 
         getFriends(post);
-        //addFriends(post);
 
     }
 
+    //oben rechts optionsmenü mit benutzer hinzufügen
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -84,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    //oben rechts optionsmenü mit benutzer hinzufügen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = new Intent(this.getApplicationContext(), AddFriendsActivity.class);
@@ -97,6 +100,16 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        //Freundesliste zurücksetzen und aktualisieren
+        friendList.clear();
+        getFriends(savedPost);
+
     }
 
     private void getFriends(Post post){

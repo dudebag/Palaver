@@ -1,12 +1,16 @@
 package com.dudebag.palaver;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import retrofit2.Call;
@@ -17,7 +21,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RegisterActivity extends AppCompatActivity {
 
-
+    //Variablen um Cursor aus Eingabefeldern zu nehmen
+    private Context mContext;
+    private Activity mActivity;
+    private RelativeLayout mCLayout;
+    private EditText mEditText;
 
     private Button buttonRegister;
     private Button buttonLogin;
@@ -85,7 +93,8 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        //Zum Login Button einrichten
+
+                //Zum Login Button einrichten
         buttonLogin = findViewById(R.id.reg_Login);
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,9 +103,23 @@ public class RegisterActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
 
+        //Benutzername- und Passwordfeld löschen
+        et_benutzername.setText("");
+        et_passwort.setText("");
+
+        //Wenn ein Cursor angezeigt wird dann im Benutzernamefeld
+        et_benutzername.requestFocus();
+
+
+    }
 
     private void processRegistration(Post post) {
 

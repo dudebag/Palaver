@@ -44,7 +44,6 @@ public class LoginActivity extends AppCompatActivity {
 
     Post responsePost;
 
-    TextView test;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +86,19 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        //Benutzername- und Passwordfeld löschen
+        et_benutzername.setText("");
+        et_passwort.setText("");
+
+        //Wenn ein Cursor angezeigt wird dann im Benutzernamefeld
+        et_benutzername.requestFocus();
 
     }
 

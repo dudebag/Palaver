@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_login"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".AddFriendsActivity">
 
     <!--<LinearLayout
@@ -32,8 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
         <!-- Das hier in den linearlayout hier drüber reinmachen + auskommentierten linearlayout
         android:layout_below="@+id/friendHeader"
@@ -53,8 +54,8 @@
             android:id="@+id/friendName"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_marginTop="40dp"
             android:layout_marginLeft="40dp"
+            android:layout_marginTop="40dp"
             android:layout_marginRight="40dp"
             android:background="@drawable/bg_editext"
             android:hint="Name"
@@ -64,8 +65,8 @@
             android:id="@+id/addFriend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:layout_marginLeft="40dp"
+            android:layout_marginTop="20dp"
             android:layout_marginRight="40dp"
             android:layout_marginBottom="40dp"
             android:background="@drawable/bg_btn"
