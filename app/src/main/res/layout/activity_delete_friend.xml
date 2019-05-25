@@ -7,28 +7,9 @@
     android:background="@drawable/background_login"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    tools:context=".AddFriendActivity">
+    tools:context=".DeleteFriendActivity">
 
-    <!--<LinearLayout
-        android:id="@+id/friendHeader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_margin="40dp"
-        >
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="15dp"
-            android:gravity="center"
-            android:text="Hier kannst du Freunde hinzufügen"
-            android:textSize="28dp"
-            android:fontFamily="@font/quicksand_bold"
-            android:textColor="#0F0F0F"
-        />
-
-    </LinearLayout> -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -59,7 +40,7 @@
             android:textSize="28dp" />
 
         <EditText
-            android:id="@+id/friendName"
+            android:id="@+id/friend_name_delete"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginLeft="40dp"
@@ -70,7 +51,7 @@
             android:paddingLeft="18dp" />
 
         <Button
-            android:id="@+id/addFriend"
+            android:id="@+id/delete_friend_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="40dp"
@@ -78,7 +59,7 @@
             android:layout_marginRight="40dp"
             android:layout_marginBottom="40dp"
             android:background="@drawable/bg_btn"
-            android:text="Freund hinzufügen" />
+            android:text="Freund entfernen" />
 
     </LinearLayout>
 

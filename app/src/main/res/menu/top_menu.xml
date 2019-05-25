@@ -7,8 +7,12 @@
         android:title="item1"
         app:showAsAction="ifRoom" />-->
 
-    <item android:id="@+id/button1"
+    <item android:id="@+id/add_friend"
         android:title="Freund hinzufügen"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/delete_friend"
+        android:title="Freund entfernen"
         app:showAsAction="never" />
 
     <item android:id="@+id/logout"

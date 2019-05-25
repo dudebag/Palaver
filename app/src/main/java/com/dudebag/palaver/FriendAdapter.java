@@ -12,6 +12,15 @@ import java.util.ArrayList;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendViewHolder> {
     private ArrayList<Friend> mFriendList;
+    private OnItemClickListener mListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
 
     //es wird ein View-Holder benötigt, deswegen inner class
     public static class FriendViewHolder extends RecyclerView.ViewHolder{
@@ -19,9 +28,21 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
         // Variable für Freundesnamen die übertragen werden
         public TextView friendName;
 
-        public FriendViewHolder(@NonNull View itemView) {
+        public FriendViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
             super(itemView);
             friendName = itemView.findViewById(R.id.friendPlaceholder);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(position);
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -36,7 +57,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.FriendView
     @Override
     public FriendViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.each_friend, parent, false);
-        FriendViewHolder fvh = new FriendViewHolder(v);
+        FriendViewHolder fvh = new FriendViewHolder(v, mListener);
         return fvh;
     }
 

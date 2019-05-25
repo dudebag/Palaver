@@ -12,8 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".DeleteFriendActivity"></activity>
+        <activity android:name=".ChatActivity" />
         <activity
-            android:name=".AddFriendsActivity"
+            android:name=".AddFriendActivity"
             android:label="@string/addFriend_activity" />
         <activity
             android:name=".LoginActivity"

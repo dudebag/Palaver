@@ -29,4 +29,7 @@ public interface JsonApi {
     @POST ("api/friends/add")
     Call<Post> addFriends(@Body Post post);
 
+    @POST ("api/friends/remove")
+    Call<Post> deleteFriends(@Body Post post);
+
 }

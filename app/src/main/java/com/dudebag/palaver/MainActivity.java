@@ -9,14 +9,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_BENUTZERNAME = "com.dudebag.palaver.EXTRA_TEXT";
     public static final String EXTRA_PASSWORT = "com.dudebag.palaver.EXTRA_PASSWORT";
+    public static final String EXTRA_USER = "com.dudebag.palaver.EXTRA_User";
 
     String benutzername;
     String passwort;
@@ -38,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     Post responsePost;
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private FriendAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     ArrayList<Friend> friendList;
@@ -89,15 +85,21 @@ public class MainActivity extends AppCompatActivity {
     //oben rechts optionsmenü mit benutzer hinzufügen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = new Intent(this.getApplicationContext(), AddFriendsActivity.class);
+        Intent intent = new Intent(this.getApplicationContext(), AddFriendActivity.class);
+        Intent intent2 = new Intent(this.getApplicationContext(), LoginActivity.class);
+        Intent intent3 = new Intent(this.getApplicationContext(), DeleteFriendActivity.class);
         switch (item.getItemId()){
-            case R.id.button1:
+            case R.id.add_friend:
                 intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
                 intent.putExtra(EXTRA_PASSWORT, passwort);
                 startActivity(intent);
                 return true;
+            case R.id.delete_friend:
+                intent3.putExtra(EXTRA_BENUTZERNAME, benutzername);
+                intent3.putExtra(EXTRA_PASSWORT, passwort);
+                startActivity(intent3);
+                return true;
             case R.id.logout:
-                Intent intent2 = new Intent(this.getApplicationContext(), LoginActivity.class);
                 startActivity(intent2);
                 return true;
             default:
@@ -122,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
         getFriends(savedPost);
 
     }
+
 
     private void getFriends(Post post){
         Call<Post> call = jsonApi.getFriends(post);
@@ -149,6 +152,24 @@ public class MainActivity extends AppCompatActivity {
 
                 mRecyclerView.setLayoutManager(mLayoutManager);
                 mRecyclerView.setAdapter(mAdapter);
+
+                //Klick auf einen Freund zum Öffnen des Chatverlaufs
+                mAdapter.setOnItemClickListener(new FriendAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+                        //friendList.get(position).changeText("HAHAHAHAHA");
+
+                        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+
+                        intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
+                        intent.putExtra(EXTRA_PASSWORT, passwort);
+                        intent.putExtra(EXTRA_USER, friendList.get(position).getName());
+
+                        startActivity(intent);
+                        //friendList.clear();
+                        //getFriends(savedPost);
+                    }
+                });
 
                 return;
 
