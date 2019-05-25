@@ -96,6 +96,10 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(EXTRA_PASSWORT, passwort);
                 startActivity(intent);
                 return true;
+            case R.id.logout:
+                Intent intent2 = new Intent(this.getApplicationContext(), LoginActivity.class);
+                startActivity(intent2);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -105,6 +109,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+
+        //Benutzername und Passwort wird in Empfang genommen
+        Intent intent = getIntent();
+        benutzername = intent.getStringExtra(LoginActivity.EXTRA_BENUTZERNAME);
+        passwort = intent.getStringExtra(LoginActivity.EXTRA_PASSWORT);
+
+        savedPost = new Post(benutzername, passwort);
 
         //Freundesliste zurücksetzen und aktualisieren
         friendList.clear();

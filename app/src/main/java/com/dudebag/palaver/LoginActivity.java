@@ -122,6 +122,8 @@ public class LoginActivity extends AppCompatActivity {
                 //Benutzer erfolgreich validiert
                 if (responsePost.getMsgType() == 1) {
                     Toast.makeText(getApplicationContext(), msg1, Toast.LENGTH_LONG).show();
+
+                    //Benutzername und Passwort werden in die nächste Activity übergeben
                     intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
                     intent.putExtra(EXTRA_PASSWORT, passwort);
                     startActivity(intent);

@@ -11,4 +11,8 @@
         android:title="Freund hinzufügen"
         app:showAsAction="never" />
 
+    <item android:id="@+id/logout"
+        android:title="Ausloggen"
+        app:showAsAction="never" />
+
 </menu>
