@@ -131,10 +131,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
 
-        //Benutzername und Passwort wird in Empfang genommen
-        Intent intent = getIntent();
-        benutzername = intent.getStringExtra(LoginActivity.EXTRA_BENUTZERNAME);
-        passwort = intent.getStringExtra(LoginActivity.EXTRA_PASSWORT);
+        if (!loggedIn) {
+            //Benutzername und Passwort wird in Empfang genommen
+            Intent intent = getIntent();
+            benutzername = intent.getStringExtra(LoginActivity.EXTRA_BENUTZERNAME);
+            passwort = intent.getStringExtra(LoginActivity.EXTRA_PASSWORT);
+
+        }
 
         savedPost = new Post(benutzername, passwort);
 
