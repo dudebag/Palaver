@@ -153,19 +153,27 @@ public class MainActivity extends AppCompatActivity {
                 mRecyclerView.setLayoutManager(mLayoutManager);
                 mRecyclerView.setAdapter(mAdapter);
 
+                //Toast.makeText(getApplicationContext(), "CCCCCCCCCC", Toast.LENGTH_LONG).show();
                 //Klick auf einen Freund zum Öffnen des Chatverlaufs
                 mAdapter.setOnItemClickListener(new FriendAdapter.OnItemClickListener() {
+
                     @Override
                     public void onItemClick(int position) {
                         //friendList.get(position).changeText("HAHAHAHAHA");
 
+                        //Toast.makeText(getApplicationContext(), "BBBBBBBBBB", Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
 
                         intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
                         intent.putExtra(EXTRA_PASSWORT, passwort);
                         intent.putExtra(EXTRA_USER, friendList.get(position).getName());
 
+                        //Toast.makeText(getApplicationContext(), "AAAAAAAAAAAA", Toast.LENGTH_LONG).show();
+
                         startActivity(intent);
+
+
+
                         //friendList.clear();
                         //getFriends(savedPost);
                     }
@@ -183,45 +191,5 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void getMessages(Post post){
-        Call<Post> call = jsonApi.getMessages(post);
-        //2--Toast.makeText(getApplicationContext(), "rip1", Toast.LENGTH_LONG).show();
 
-        call.enqueue(new Callback<Post>() {
-            @Override
-            public void onResponse(Call<Post> call, Response<Post> response) {
-
-                if (!response.isSuccessful()){
-                    Toast.makeText(getApplicationContext(), "rip2", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                Toast.makeText(getApplicationContext(), "rip3", Toast.LENGTH_LONG).show();
-                responsePost = response.body();
-
-                String text = "";
-                text += "Code: " + response.code() + "\n";
-                text += "MsgType: " + responsePost.getMsgType() + "\n";
-                text += "Info: " + responsePost.getInfo() + "\n";
-                text += "Data: " + "\n";
-
-                String[] friends;
-                        //= new String[responsePost.getData().length];
-                //friends = responsePost.getData();
-
-                /*for (int i=0; i< friends.length; i++) {
-                    text += friends[i] + "\n";
-                }*/
-
-
-                //textViewResult.setText(text);
-                return;
-
-            }
-
-            @Override
-            public void onFailure(Call<Post> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "ripTODES", Toast.LENGTH_LONG).show();
-            }
-        });
-    }
 }

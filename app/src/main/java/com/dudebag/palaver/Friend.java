@@ -8,10 +8,6 @@ public class Friend {
         this.name = name;
     }
 
-    public void changeText(String text) {
-        name = text;
-    }
-
     public String getName() {
         return name;
     }

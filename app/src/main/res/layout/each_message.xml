@@ -3,30 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="4dp"
-    app:cardUseCompatPadding="true">
+    app:cardCornerRadius="4dp">
 
     <RelativeLayout
-        android:id="@+id/msg_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="4dp"
-        >
+        android:layout_margin="4dp">
 
         <TextView
-            android:id="@+id/friendPlaceholder"
+            android:id="@+id/messagePlaceholder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-
             android:text="NAME"
-            android:textSize="26dp"
+            android:textSize="20dp"
             android:textStyle="bold"
             android:fontFamily="@font/quicksand_book"
-            android:textColor="@android:color/black"
-            />
-
-
+            android:textColor="@android:color/black"/>
 
 
     </RelativeLayout>

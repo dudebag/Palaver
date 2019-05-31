@@ -21,7 +21,7 @@ public interface JsonApi {
     Call<Post> processLogin(@Body Post post);
 
     @POST ("api/message/get")
-    Call<Post> getMessages(@Body Post post);
+    Call<PostAnswer> getMessages(@Body PostAnswer post);
 
     @POST ("api/friends/get")
     Call<Post> getFriends(@Body Post post);
@@ -31,5 +31,8 @@ public interface JsonApi {
 
     @POST ("api/friends/remove")
     Call<Post> deleteFriends(@Body Post post);
+
+    @POST ("api/message/send")
+    Call<PostMessage> sendMessage(@Body PostMessage post);
 
 }

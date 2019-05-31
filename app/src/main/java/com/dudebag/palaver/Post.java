@@ -27,6 +27,9 @@ public class Post {
     @SerializedName("Data")
     private List<String> data;
 
+    //@SerializedName("Data")
+    //private String data2;
+
     @SerializedName("PushToken")
     private String pushToken;
 
@@ -56,6 +59,15 @@ public class Post {
         this.username = username;
         this.password = password;
         this.friend = friend;
+    }
+
+    //sendMessage()
+    public Post(String username, String password, List<String> data, String recipient, String mimeType) {
+        this.username = username;
+        this.password = password;
+        this.data = data;
+        this.recipient = recipient;
+        this.mimeType = mimeType;
     }
 
     //getMessages()

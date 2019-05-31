@@ -1,16 +1,32 @@
 package com.dudebag.palaver;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ChatActivity extends AppCompatActivity {
+
+    ImageButton button;
+
+    EditText editText;
 
     String benutzername;
     String passwort;
@@ -18,16 +34,30 @@ public class ChatActivity extends AppCompatActivity {
 
     JsonApi jsonApi;
 
+    ArrayList<Message> messageList;
+    ArrayList<String> testList;
+
+    PostAnswer responsePost;
+    PostMessage responsePost2;
+
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
 
         //Benutzername und Passwort wird in Empfang genommen
         Intent intent = getIntent();
         benutzername = intent.getStringExtra(MainActivity.EXTRA_BENUTZERNAME);
         passwort = intent.getStringExtra(MainActivity.EXTRA_PASSWORT);
         user = intent.getStringExtra(MainActivity.EXTRA_USER);
+
+        //Toast.makeText(getApplicationContext(), "BN: " + benutzername + "\n" + "PW: " + passwort + "\n" + "US: " + user, Toast.LENGTH_LONG).show();
 
         //Retrofit einrichten
         Retrofit retrofit = new Retrofit.Builder()
@@ -38,8 +68,38 @@ public class ChatActivity extends AppCompatActivity {
         //Gson Konverter einrichten
         jsonApi = retrofit.create(JsonApi.class);
 
+        editText = findViewById(R.id.input_message);
+
+        button = findViewById(R.id.send_msg_btn);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), editText.getText().toString().trim(), Toast.LENGTH_LONG).show();
+
+                PostMessage post2 = new PostMessage(benutzername, passwort, user, "text/plain", editText.getText().toString().trim());
+                PostAnswer post = new PostAnswer(benutzername, passwort, user);
+
+                sendMessage(post2);
+                getMessages(post);
+            }
+        });
+
+        messageList = new ArrayList<>();
+
+        testList = new ArrayList<>();
+        testList.add("hallo testtest");
+
+        PostAnswer post = new PostAnswer(benutzername, passwort, user);
+
+
+        //sendMessage(post2);
+
+
+        getMessages(post);
+
 
     }
+
 
     //oben rechts optionsmenü mit benutzer hinzufügen
     @Override
@@ -47,5 +107,96 @@ public class ChatActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.chat_menu, menu);
         return true;
+    }
+
+
+    private void sendMessage(PostMessage post) {
+        Call<PostMessage> call = jsonApi.sendMessage(post);
+
+        call.enqueue(new Callback<PostMessage>() {
+            @Override
+            public void onResponse(Call<PostMessage> call, Response<PostMessage> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                responsePost2 = response.body();
+
+                if (responsePost2.getMsgType() == 1) {
+                    Toast.makeText(getApplicationContext(), "MsgType: " + responsePost2.getMsgType() + "\n" + "Info: " + responsePost2.getInfo(), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "MsgType: " + responsePost2.getMsgType() + "\n" + "Info: " + responsePost2.getInfo(), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PostMessage> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+
+
+    private void getMessages(PostAnswer post) {
+        Call<PostAnswer> call = jsonApi.getMessages(post);
+
+        call.enqueue(new Callback<PostAnswer>() {
+            @Override
+            public void onResponse(Call<PostAnswer> call, Response<PostAnswer> response) {
+
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Fehler aufgetaucht", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                responsePost = response.body();
+
+                messageList.clear();
+
+                for (int i = 0; i < responsePost.getData().size(); i++) {
+
+                    String text = "";
+
+                    //text += "Sender: " + responsePost.getData().get(i).getSender();
+                    //text += "\n" + "Recipient: " + responsePost.getData().get(i).getRecipient();
+                    //text += "\n" + "Mimetype: " + responsePost.getData().get(i).getMimeType();
+                    text += "\n" + "Data: " + responsePost.getData().get(i).getData();
+                    //text += "\n" + "DateTime: " + responsePost.getData().get(i).getDateTime();
+                    //text += responsePost.getDataDetail(i).
+                    //String text += ""
+                    messageList.add(new Message(text));
+                    //messageList.get(i).se
+
+                }
+
+                mRecyclerView = findViewById(R.id.private_messages);
+                mRecyclerView.setHasFixedSize(true);
+                mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                mAdapter = new MessageAdapter(messageList);
+
+                //mAdapter.bindViewHolder();
+
+                mRecyclerView.setLayoutManager(mLayoutManager);
+                mRecyclerView.setAdapter(mAdapter);
+
+
+                /*String text = "";
+                text += "Code: " + response.code() + "\n";
+                text += "MsgType: " + responsePost.getMsgType() + "\n";
+                text += "Info: " + responsePost.getInfo() + "\n";
+                text += "Data: " + "\n";*/
+
+
+                return;
+
+            }
+
+            @Override
+            public void onFailure(Call<PostAnswer> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }
