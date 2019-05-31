@@ -51,7 +51,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_margin="24dp"
             android:fontFamily="@font/quicksand_bold"
             android:gravity="center"
             android:text="Bitte gib den Namen deines Freundes an"
@@ -67,14 +67,14 @@
             android:layout_marginRight="40dp"
             android:background="@drawable/bg_editext"
             android:hint="Name"
-            android:paddingLeft="18dp" />
+            android:paddingLeft="16dp" />
 
         <Button
             android:id="@+id/addFriend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="40dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="24dp"
             android:layout_marginRight="40dp"
             android:layout_marginBottom="40dp"
             android:background="@drawable/bg_btn"
