@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,8 +26,17 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_PASSWORT = "com.dudebag.palaver.EXTRA_PASSWORT";
     public static final String EXTRA_USER = "com.dudebag.palaver.EXTRA_User";
 
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String PALAVER_ID = "palaver_id";
+    public static final String PALAVER_PW = "palaver_pw";
+    public static final String LOGGED_IN = "logged_in";
+    public static final String FROM_LOGIN = "from_login";
+
     String benutzername;
     String passwort;
+
+    boolean loggedIn;
+    boolean fromLogin;
 
     JsonApi jsonApi;
 
@@ -50,10 +60,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Benutzername und Passwort wird in Empfang genommen
-        Intent intent = getIntent();
-        benutzername = intent.getStringExtra(LoginActivity.EXTRA_BENUTZERNAME);
-        passwort = intent.getStringExtra(LoginActivity.EXTRA_PASSWORT);
+        loadData();
+
+        //Wenn man sich gerade erst eingeloggt hat
+        if (fromLogin) {
+
+            //Benutzername und Passwort wird in Empfang genommen
+            Intent intent = getIntent();
+            benutzername = intent.getStringExtra(LoginActivity.EXTRA_BENUTZERNAME);
+            passwort = intent.getStringExtra(LoginActivity.EXTRA_PASSWORT);
+
+            endLogin();
+        }
 
         //Retrofit einrichten
         Retrofit retrofit = new Retrofit.Builder()
@@ -100,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent3);
                 return true;
             case R.id.logout:
+                deleteData();
                 startActivity(intent2);
                 return true;
             default:
@@ -189,6 +208,40 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+
+    public void loadData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        loggedIn = sharedPreferences.getBoolean(LOGGED_IN, false);
+        fromLogin = sharedPreferences.getBoolean(FROM_LOGIN, false);
+        benutzername = sharedPreferences.getString(PALAVER_ID, "");
+        passwort = sharedPreferences.getString(PALAVER_PW, "");
+
+    }
+
+    public void endLogin() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putBoolean(FROM_LOGIN, false);
+        fromLogin = false;
+
+        editor.apply();
+    }
+
+    public void deleteData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString(PALAVER_ID, "");
+        editor.putString(PALAVER_PW, "");
+        editor.putBoolean(LOGGED_IN, false);
+        editor.putBoolean(FROM_LOGIN, false);
+        loggedIn = false;
+        fromLogin = false;
+
+        editor.apply();
     }
 
 

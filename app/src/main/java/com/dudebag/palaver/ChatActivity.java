@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -74,9 +75,10 @@ public class ChatActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), editText.getText().toString().trim(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), editText.getText().toString().trim(), Toast.LENGTH_LONG).show();
 
-                PostMessage post2 = new PostMessage(benutzername, passwort, user, "text/plain", editText.getText().toString().trim());
+                String input = editText.getText().toString().trim();
+                PostMessage post2 = new PostMessage(benutzername, passwort, user, "text/plain", input);
                 PostAnswer post = new PostAnswer(benutzername, passwort, user);
 
                 sendMessage(post2);
@@ -86,8 +88,8 @@ public class ChatActivity extends AppCompatActivity {
 
         messageList = new ArrayList<>();
 
-        testList = new ArrayList<>();
-        testList.add("hallo testtest");
+        //testList = new ArrayList<>();
+        //testList.add("hallo testtest");
 
         PostAnswer post = new PostAnswer(benutzername, passwort, user);
 
@@ -117,7 +119,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<PostMessage> call, Response<PostMessage> response) {
                 if (!response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), response.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "1: " + response.toString(), Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -132,7 +134,13 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<PostMessage> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                if (t instanceof IOException)
+                    Toast.makeText(getApplicationContext(), "2: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                else if (t instanceof IllegalStateException)
+                    Toast.makeText(getApplicationContext(), "3: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(getApplicationContext(), "4: " + t.getMessage(), Toast.LENGTH_LONG).show();
+
             }
         });
 
@@ -157,12 +165,13 @@ public class ChatActivity extends AppCompatActivity {
 
                 for (int i = 0; i < responsePost.getData().size(); i++) {
 
-                    String text = "";
+                    String text = responsePost.getData().get(i).getData();
+                    //String text = "";
 
                     //text += "Sender: " + responsePost.getData().get(i).getSender();
                     //text += "\n" + "Recipient: " + responsePost.getData().get(i).getRecipient();
                     //text += "\n" + "Mimetype: " + responsePost.getData().get(i).getMimeType();
-                    text += "\n" + "Data: " + responsePost.getData().get(i).getData();
+                    //text += "\n" + "Data: " + responsePost.getData().get(i).getData();
                     //text += "\n" + "DateTime: " + responsePost.getData().get(i).getDateTime();
                     //text += responsePost.getDataDetail(i).
                     //String text += ""
@@ -195,7 +204,7 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<PostAnswer> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "5: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

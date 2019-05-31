@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -24,6 +25,15 @@ public class LoginActivity extends AppCompatActivity {
 
     public static final String EXTRA_BENUTZERNAME = "com.dudebag.palaver.EXTRA_TEXT";
     public static final String EXTRA_PASSWORT = "com.dudebag.palaver.EXTRA_PASSWORT";
+
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String PALAVER_ID = "palaver_id";
+    public static final String PALAVER_PW = "palaver_pw";
+    public static final String LOGGED_IN = "logged_in";
+    public static final String FROM_LOGIN = "from_login";
+
+    boolean loggedIn;
+    boolean fromLogin;
 
     EditText et_benutzername;
     EditText et_passwort;
@@ -125,6 +135,8 @@ public class LoginActivity extends AppCompatActivity {
                 if (responsePost.getMsgType() == 1) {
                     //Toast.makeText(getApplicationContext(), msg1, Toast.LENGTH_LONG).show();
 
+                    saveData();
+
                     //Benutzername und Passwort werden in die nächste Activity übergeben
                     intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
                     intent.putExtra(EXTRA_PASSWORT, passwort);
@@ -194,6 +206,22 @@ public class LoginActivity extends AppCompatActivity {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+
+
+    public void saveData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString(PALAVER_ID, benutzername);
+        editor.putString(PALAVER_PW, passwort);
+        editor.putBoolean(LOGGED_IN, true);
+        editor.putBoolean(FROM_LOGIN, true);
+
+        editor.apply();
+    }
+
+
 
 
 
