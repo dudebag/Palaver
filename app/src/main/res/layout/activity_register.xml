@@ -33,38 +33,38 @@
             android:fontFamily="@font/quicksand_bold"
             android:text="Registrieren"
             android:textColor="#0F0F0F"
-            android:textSize="34dp" />
+            android:textSize="32dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:fontFamily="@font/quicksand_bold"
             android:text="Bitte füllen Sie alle Felder aus"
             android:textAlignment="center"
             android:textColor="#3A3A3A"
-            android:textSize="18dp" />
+            android:textSize="16dp" />
 
         <EditText
             android:id="@+id/reg_Benutzername"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_marginTop="42dp"
+            android:layout_marginTop="40dp"
             android:background="@drawable/bg_editext"
             android:inputType="text"
             android:hint="Benutzername"
-            android:paddingLeft="18dp" />
+            android:paddingLeft="16dp" />
 
         <EditText
             android:id="@+id/reg_Passwort"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_marginTop="14dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/bg_editext"
             android:inputType="textPassword"
             android:hint="Passwort"
-            android:paddingLeft="18dp" />
+            android:paddingLeft="16dp" />
 
         <Button
             android:id="@+id/reg_Register"
@@ -79,8 +79,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="28dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp"
             android:orientation="horizontal">
 
             <TextView
@@ -106,7 +106,7 @@
                 android:id="@+id/reg_Login"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:layout_marginLeft="14dp"
+                android:layout_marginLeft="16dp"
                 android:background="@drawable/bg_btn"
                 android:text="Login"
                 android:textColor="#0F0F0F"
