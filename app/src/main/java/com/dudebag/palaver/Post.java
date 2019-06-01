@@ -48,6 +48,7 @@ public class Post {
     @SerializedName("Friend")
     private String friend;
 
+
     //processRegistration(), processLogin(), getFriends()
     public Post(String username, String password) {
         this.username = username;

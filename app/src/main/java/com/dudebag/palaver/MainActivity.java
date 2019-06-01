@@ -4,14 +4,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -31,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String PALAVER_PW = "palaver_pw";
     public static final String LOGGED_IN = "logged_in";
     public static final String FROM_LOGIN = "from_login";
+    public static final String FRIEND_LIST = "friend_list";
 
     String benutzername;
     String passwort;
@@ -47,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private FriendAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    ArrayList<Friend> friendList;
+    public ArrayList<Friend> friendList;
 
     String error1 = "Freund dem System nicht bekannt";
     String error2 = "Freund bereits auf der Liste";
@@ -60,18 +68,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        loadData();
 
-        //Wenn man sich gerade erst eingeloggt hat
-        if (fromLogin) {
-
-            //Benutzername und Passwort wird in Empfang genommen
-            Intent intent = getIntent();
-            benutzername = intent.getStringExtra(LoginActivity.EXTRA_BENUTZERNAME);
-            passwort = intent.getStringExtra(LoginActivity.EXTRA_PASSWORT);
-
-            endLogin();
-        }
 
         //Retrofit einrichten
         Retrofit retrofit = new Retrofit.Builder()
@@ -84,11 +81,81 @@ public class MainActivity extends AppCompatActivity {
 
         friendList = new ArrayList<>();
 
-        Post post = new Post(benutzername, passwort);
+        //responsePost = new Post();
 
-        savedPost = post;
+        loadFirstLogin();
 
-        getFriends(post);
+
+
+        //Erster Login -- Man hat immer Internet
+        if (fromLogin) {
+
+            loadData();
+
+            endLogin();
+
+            Post post = new Post(benutzername, passwort);
+            getFriends(post);
+
+            return;
+
+        }
+        //Ab Zweiter Appstart
+        else {
+
+            //Internet
+            if (checkInternet()) {
+
+              loadData();
+              friendList.clear();
+
+              Post post = new Post(benutzername, passwort);
+              getFriends(post);
+
+              return;
+
+            }
+
+            //kein Internet
+            else {
+
+                loadData();
+                loadFriendlist();
+
+                mRecyclerView = findViewById(R.id.recyclerView);
+                //setHasFixedSize auf true wenn recyclerview immer gleich groß weil performance
+                mRecyclerView.setHasFixedSize(true);
+                mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                mAdapter = new FriendAdapter(friendList);
+
+                mRecyclerView.setLayoutManager(mLayoutManager);
+                mRecyclerView.setAdapter(mAdapter);
+
+
+                //Klick auf einen Freund zum Öffnen des Chatverlaufs
+                mAdapter.setOnItemClickListener(new FriendAdapter.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(int position) {
+
+                        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+
+                        intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
+                        intent.putExtra(EXTRA_PASSWORT, passwort);
+                        intent.putExtra(EXTRA_USER, friendList.get(position).getName());
+
+                        startActivity(intent);
+
+
+                    }
+                });
+
+                return;
+
+
+            }
+
+        }
 
     }
 
@@ -131,19 +198,60 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
 
-        if (!loggedIn) {
-            //Benutzername und Passwort wird in Empfang genommen
-            Intent intent = getIntent();
-            benutzername = intent.getStringExtra(LoginActivity.EXTRA_BENUTZERNAME);
-            passwort = intent.getStringExtra(LoginActivity.EXTRA_PASSWORT);
+        //Internet
+        if (checkInternet()) {
+
+            loadData();
+            friendList.clear();
+
+            Post post = new Post(benutzername, passwort);
+            getFriends(post);
+
+            saveFriendlist();
+            return;
 
         }
 
-        savedPost = new Post(benutzername, passwort);
+        //Kein Internet
+        else {
 
-        //Freundesliste zurücksetzen und aktualisieren
-        friendList.clear();
-        getFriends(savedPost);
+            loadData();
+            loadFriendlist();
+
+            mRecyclerView = findViewById(R.id.recyclerView);
+            //setHasFixedSize auf true wenn recyclerview immer gleich groß weil performance
+            mRecyclerView.setHasFixedSize(true);
+            mLayoutManager = new LinearLayoutManager(getApplicationContext());
+            mAdapter = new FriendAdapter(friendList);
+
+            mRecyclerView.setLayoutManager(mLayoutManager);
+            mRecyclerView.setAdapter(mAdapter);
+
+
+            //Klick auf einen Freund zum Öffnen des Chatverlaufs
+            mAdapter.setOnItemClickListener(new FriendAdapter.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(int position) {
+
+                    Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+
+                    intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
+                    intent.putExtra(EXTRA_PASSWORT, passwort);
+                    intent.putExtra(EXTRA_USER, friendList.get(position).getName());
+
+                    startActivity(intent);
+
+
+                }
+            });
+
+            return;
+
+        }
+
+
+
 
     }
 
@@ -164,7 +272,10 @@ public class MainActivity extends AppCompatActivity {
 
                 for (int i = 0; i < responsePost.getData().size(); i++) {
                     friendList.add(new Friend(responsePost.getDataDetail(i)));
+
                 }
+
+                saveFriendlist();
 
                 mRecyclerView = findViewById(R.id.recyclerView);
                 //setHasFixedSize auf true wenn recyclerview immer gleich groß weil performance
@@ -172,36 +283,30 @@ public class MainActivity extends AppCompatActivity {
                 mLayoutManager = new LinearLayoutManager(getApplicationContext());
                 mAdapter = new FriendAdapter(friendList);
 
+                //setFriendList(friendList);
+
                 mRecyclerView.setLayoutManager(mLayoutManager);
                 mRecyclerView.setAdapter(mAdapter);
 
-                //Toast.makeText(getApplicationContext(), "CCCCCCCCCC", Toast.LENGTH_LONG).show();
+
+
+
                 //Klick auf einen Freund zum Öffnen des Chatverlaufs
                 mAdapter.setOnItemClickListener(new FriendAdapter.OnItemClickListener() {
 
                     @Override
                     public void onItemClick(int position) {
-                        //friendList.get(position).changeText("HAHAHAHAHA");
 
-                        //Toast.makeText(getApplicationContext(), "BBBBBBBBBB", Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
 
                         intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
                         intent.putExtra(EXTRA_PASSWORT, passwort);
                         intent.putExtra(EXTRA_USER, friendList.get(position).getName());
 
-                        //Toast.makeText(getApplicationContext(), "AAAAAAAAAAAA", Toast.LENGTH_LONG).show();
-
                         startActivity(intent);
 
-
-
-                        //friendList.clear();
-                        //getFriends(savedPost);
                     }
                 });
-
-                return;
 
 
             }
@@ -239,6 +344,7 @@ public class MainActivity extends AppCompatActivity {
 
         editor.putString(PALAVER_ID, "");
         editor.putString(PALAVER_PW, "");
+        editor.putString(FRIEND_LIST, "");
         editor.putBoolean(LOGGED_IN, false);
         editor.putBoolean(FROM_LOGIN, false);
         loggedIn = false;
@@ -248,4 +354,48 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private boolean checkInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private void saveFriendlist() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+
+        String json = gson.toJson(friendList);
+
+        editor.putString(FRIEND_LIST, json);
+        editor.apply();
+
+    }
+
+    private void loadFriendlist() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        Gson gson = new Gson();
+
+        String json = sharedPreferences.getString(FRIEND_LIST, "");
+        Type type = new TypeToken<ArrayList<Friend>>() {}.getType();
+        friendList = gson.fromJson(json, type);
+    }
+
+    private void loadFirstLogin() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        fromLogin = sharedPreferences.getBoolean(FROM_LOGIN, false);
+    }
+
+
+    private void saveData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+
+    }
+
+    public void setFriendList(ArrayList<Friend> friendList) {
+        this.friendList = friendList;
+    }
 }

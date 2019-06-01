@@ -3,8 +3,11 @@ package com.dudebag.palaver;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -46,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     final String error3 = "Benutzername oder Passwort falsch";
     final String error4 = "Passwort nicht korrekt";
     final String error5 = "Benutzer existiert nicht";
+    final String error6 = "Es besteht keine Internetverbindung";
 
     final String msg1 = "Benutzer erfolgreich validiert";
     final String msg2 = "Benutzername fehlt";
@@ -71,7 +75,6 @@ public class LoginActivity extends AppCompatActivity {
         //Gson Konverter einrichten
         jsonApi = retrofit.create(JsonApi.class);
 
-        //test = findViewById(R.id.text_view_result);
 
         //Eingabefelder zuweisen
         et_benutzername = findViewById(R.id.log_Benutzername);
@@ -88,9 +91,24 @@ public class LoginActivity extends AppCompatActivity {
                 if (!validateForm()) {
                     return;
                 }
-                Post post = new Post("a", "b");
-                post.setUsername(benutzername);
-                post.setPassword(passwort);
+
+                if (!checkInternet()) {
+                    Toast.makeText(getApplicationContext(), error6, Toast.LENGTH_SHORT).show();
+
+                    //Passwordfeld löschen
+                    et_passwort.setText("");
+
+                    //Wenn ein Cursor angezeigt wird dann im Passwortfeld
+                    et_passwort.requestFocus();
+
+                    return;
+                }
+
+                Post post = new Post(benutzername, passwort);
+
+                //post.setUsername(benutzername);
+                //post.setPassword(passwort);
+
                 processLogin(post);
 
             }
@@ -222,6 +240,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    private boolean checkInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
 
 
