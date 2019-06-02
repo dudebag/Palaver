@@ -1,5 +1,6 @@
 package com.dudebag.palaver;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,6 +16,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -39,16 +44,18 @@ public class MainActivity extends AppCompatActivity {
     public static final String LOGGED_IN = "logged_in";
     public static final String FROM_LOGIN = "from_login";
     public static final String FRIEND_LIST = "friend_list";
+    public static final String PUSHTOKEN = "pushtoken";
 
     String benutzername;
     String passwort;
+
+    String token;
 
     boolean loggedIn;
     boolean fromLogin;
 
     JsonApi jsonApi;
 
-    Post savedPost;
     Post responsePost;
 
     private RecyclerView mRecyclerView;
@@ -97,6 +104,15 @@ public class MainActivity extends AppCompatActivity {
             Post post = new Post(benutzername, passwort);
             getFriends(post);
 
+
+
+            replaceToken();
+            loadData();
+
+            Pushtoken pushtoken = new Pushtoken(benutzername, passwort, token);
+
+            refreshToken(pushtoken);
+
             return;
 
         }
@@ -106,14 +122,18 @@ public class MainActivity extends AppCompatActivity {
             //Internet
             if (checkInternet()) {
 
-              loadData();
-              friendList.clear();
+                replaceToken();
+                loadData();
 
-              Post post = new Post(benutzername, passwort);
-              getFriends(post);
+                friendList.clear();
 
+                Post post = new Post(benutzername, passwort);
+                getFriends(post);
 
-              return;
+                Pushtoken pushtoken = new Pushtoken(benutzername, passwort, token);
+                refreshToken(pushtoken);
+
+                return;
 
             }
 
@@ -202,13 +222,16 @@ public class MainActivity extends AppCompatActivity {
         //Internet
         if (checkInternet()) {
 
+            replaceToken();
             loadData();
             friendList.clear();
 
             Post post = new Post(benutzername, passwort);
             getFriends(post);
 
-            saveFriendlist();
+            Pushtoken pushtoken = new Pushtoken(benutzername, passwort, token);
+            refreshToken(pushtoken);
+
             return;
 
         }
@@ -320,12 +343,59 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
+
+    private void refreshToken(Pushtoken pushtoken) {
+
+        Call<Pushtoken> call = jsonApi.refreshToken(pushtoken);
+
+        call.enqueue(new Callback<Pushtoken>() {
+            @Override
+            public void onResponse(Call<Pushtoken> call, Response<Pushtoken> response) {
+
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Fehler bei Token", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                Pushtoken responseBody3 = response.body();
+
+                if (responseBody3.getMsgType() == 1) {
+                    //Toast.makeText(getApplicationContext(), responseBody3.getInfo(), Toast.LENGTH_LONG).show();
+                }
+
+                else {
+                    String help = "MsgType: " + responseBody3.getMsgType() + "\n" + "Info: " + responseBody3.getInfo() + "\n" + "Data: " + responseBody3.getData();
+                    Toast.makeText(getApplicationContext(), help, Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+
+
+            }
+
+            @Override
+            public void onFailure(Call<Pushtoken> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Token Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+
+    }
+
+
+
+
+
+
     public void loadData() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         loggedIn = sharedPreferences.getBoolean(LOGGED_IN, false);
         fromLogin = sharedPreferences.getBoolean(FROM_LOGIN, false);
         benutzername = sharedPreferences.getString(PALAVER_ID, "");
         passwort = sharedPreferences.getString(PALAVER_PW, "");
+        token = sharedPreferences.getString(PUSHTOKEN, "");
 
     }
 
@@ -346,6 +416,7 @@ public class MainActivity extends AppCompatActivity {
         editor.putString(PALAVER_ID, "");
         editor.putString(PALAVER_PW, "");
         editor.putString(FRIEND_LIST, "");
+        editor.putString(PUSHTOKEN, "");
         editor.putBoolean(LOGGED_IN, false);
         editor.putBoolean(FROM_LOGIN, false);
         loggedIn = false;
@@ -389,5 +460,38 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void replaceToken() {
 
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "replaceToken fehlgeschlagen", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                String token = task.getResult().getToken();
+
+                saveToken(token);
+
+                //Toast.makeText(getApplicationContext(), "TOKEN: " + token, Toast.LENGTH_LONG).show();
+                return;
+            }
+        });
+    }
+
+
+    private void saveToken(String t) {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString(PUSHTOKEN, t);
+
+        editor.apply();
+    }
+
+    @Override
+    public void onBackPressed() {
+
+    }
 }

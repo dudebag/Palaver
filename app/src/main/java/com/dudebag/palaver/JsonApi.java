@@ -35,4 +35,7 @@ public interface JsonApi {
     @POST ("api/message/send")
     Call<PostMessage> sendMessage(@Body PostMessage post);
 
+    @POST ("api/user/pushtoken")
+    Call<Pushtoken> refreshToken(@Body Pushtoken pushtoken);
+
 }

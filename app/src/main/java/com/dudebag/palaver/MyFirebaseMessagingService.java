@@ -1,15 +1,49 @@
 package com.dudebag.palaver;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
+import android.widget.Toast;
+
+import androidx.core.app.NotificationBuilderWithBuilderAccessor;
+import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Random;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
+
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
+
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String PUSHTOKEN = "pushtoken";
+    public static final String CHANNEL_ID = "channel_id";
+
+    public static int NOTIFICATION_ID = 1;
+
+
     public MyFirebaseMessagingService() {
+
+
     }
 
     @Override
@@ -19,16 +53,76 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         //Wenn Antwort nicht leer
         if (remoteMessage.getData().size() > 0) {
 
+
+            //remoteMessage.n
+            if (remoteMessage != null)
+            //generateNotification(remoteMessage.getNotification().getBody(), remoteMessage.getNotification().getTitle());
+                generateNotification("Du hast eine neue Nachricht erhalten", "Palaver");
+
+            else {
+                //Toast.makeText(this, "HALULULUL", Toast.LENGTH_LONG).show();
+                Log.d(TAG, "PENISPUMPE");
+            }
+
+
         }
     }
+
+    private void generateNotification(String body, String title) {
+
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
+
+            notificationBuilder.setAutoCancel(true)
+                    .setDefaults(Notification.DEFAULT_ALL)
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.mipmap.palaver_logo)
+                    .setContentTitle(title)
+                    .setContentText(body);
+
+
+            notificationManager.notify(new Random().nextInt(), notificationBuilder.build());
+
+        }
+
+
+
+
+
+
 
 
     @Override
     public void onNewToken(String s) {
-        super.onNewToken(s);
+        //super.onNewToken(s);
 
-        //sendRegistrationToServer(s);
+        saveToken(s);
+        Log.d(TAG, "TOKEN SAVED");
     }
+
+
+
+
+
+
+
+
+    public void saveToken(String s) {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString(PUSHTOKEN, s);
+
+        editor.apply();
+    }
+
+
+
+
+
+
 
 
 }
