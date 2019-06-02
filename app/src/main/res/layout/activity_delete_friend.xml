@@ -37,18 +37,18 @@
             android:gravity="center"
             android:text="Bitte gib den Namen deines Freundes an"
             android:textColor="#0F0F0F"
-            android:textSize="28dp" />
+            android:textSize="32dp" />
 
         <EditText
             android:id="@+id/friend_name_delete"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginLeft="40dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="16dp"
             android:layout_marginRight="40dp"
             android:background="@drawable/bg_editext"
             android:hint="Name"
-            android:paddingLeft="18dp" />
+            android:paddingLeft="16dp" />
 
         <Button
             android:id="@+id/delete_friend_btn"

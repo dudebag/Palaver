@@ -23,13 +23,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:background="@android:color/darker_gray"
+        android:background="@android:color/holo_blue_dark"
         android:orientation="horizontal"
         >
 
         <EditText
             android:id="@+id/input_message"
-            android:layout_width="320dp"
+            android:layout_width="800dp"
             android:layout_height="wrap_content"
             android:hint="Nachricht"
             android:padding="16dp"
@@ -37,8 +37,10 @@
 
         <ImageButton
             android:id="@+id/send_msg_btn"
-            android:layout_width="64dp"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/chat_linear_layout"
+            android:layout_alignTop="@+id/chat_linear_layout"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginRight="16dp"
