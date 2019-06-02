@@ -6,6 +6,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -39,6 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     String error1 = "Error Code: ";
     String error2 = "Benutzer existiert bereits";
+    String error3 = "Es besteht keine Internetverbindung";
 
     String msg2 = "Benutzername fehlt";
     String msg3 = "Passwort fehlt";
@@ -76,19 +79,30 @@ public class RegisterActivity extends AppCompatActivity {
         buttonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 fillForm();
-                /*if (!validateForm()) {
-                    buttonRegister.setEnabled(false);
-                }
-                else {
-                    buttonRegister.setEnabled(true);
-                }*/
+
                 if (!validateForm()) {
                     return;
                 }
-                Post post = new Post("a", "b");
-                post.setUsername(benutzername);
-                post.setPassword(passwort);
+
+                if (!checkInternet()) {
+                    Toast.makeText(getApplicationContext(), error3, Toast.LENGTH_SHORT).show();
+
+                    //Passwordfeld löschen
+                    et_passwort.setText("");
+
+                    //Wenn ein Cursor angezeigt wird dann im Passwortfeld
+                    et_passwort.requestFocus();
+
+                    return;
+                }
+
+                Post post = new Post(benutzername, passwort);
+
+                //post.setUsername(benutzername);
+                //post.setPassword(passwort);
+
                 processRegistration(post);
 
             }
@@ -198,4 +212,13 @@ public class RegisterActivity extends AppCompatActivity {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
+
+
+    private boolean checkInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
 }

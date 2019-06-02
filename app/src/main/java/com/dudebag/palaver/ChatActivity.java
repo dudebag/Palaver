@@ -4,7 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -54,11 +57,7 @@ public class ChatActivity extends AppCompatActivity {
 
         //Benutzername und Passwort wird in Empfang genommen
         Intent intent = getIntent();
-        benutzername = intent.getStringExtra(MainActivity.EXTRA_BENUTZERNAME);
-        passwort = intent.getStringExtra(MainActivity.EXTRA_PASSWORT);
         user = intent.getStringExtra(MainActivity.EXTRA_USER);
-
-        //Toast.makeText(getApplicationContext(), "BN: " + benutzername + "\n" + "PW: " + passwort + "\n" + "US: " + user, Toast.LENGTH_LONG).show();
 
         //Retrofit einrichten
         Retrofit retrofit = new Retrofit.Builder()
@@ -88,14 +87,9 @@ public class ChatActivity extends AppCompatActivity {
 
         messageList = new ArrayList<>();
 
-        //testList = new ArrayList<>();
-        //testList.add("hallo testtest");
+
 
         PostAnswer post = new PostAnswer(benutzername, passwort, user);
-
-
-        //sendMessage(post2);
-
 
         getMessages(post);
 
@@ -208,4 +202,17 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
+
+    private boolean checkInternet() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+
+
 }
