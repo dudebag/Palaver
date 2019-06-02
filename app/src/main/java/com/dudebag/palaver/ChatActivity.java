@@ -57,6 +57,8 @@ public class ChatActivity extends AppCompatActivity {
 
         //Benutzername und Passwort wird in Empfang genommen
         Intent intent = getIntent();
+        benutzername = intent.getStringExtra(MainActivity.EXTRA_BENUTZERNAME);
+        passwort = intent.getStringExtra(MainActivity.EXTRA_PASSWORT);
         user = intent.getStringExtra(MainActivity.EXTRA_USER);
 
         //Retrofit einrichten
@@ -74,13 +76,19 @@ public class ChatActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(getApplicationContext(), editText.getText().toString().trim(), Toast.LENGTH_LONG).show();
+
+                //Kein Internet
+                if (!checkInternet()) {
+                    Toast.makeText(getApplicationContext(), "Du hast kein Internet", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 String input = editText.getText().toString().trim();
                 PostMessage post2 = new PostMessage(benutzername, passwort, user, "text/plain", input);
                 PostAnswer post = new PostAnswer(benutzername, passwort, user);
 
                 sendMessage(post2);
+                Toast.makeText(getApplicationContext(), "ID: " + benutzername + "\n" + "PW: " + passwort, Toast.LENGTH_LONG).show();
                 getMessages(post);
             }
         });
@@ -153,24 +161,25 @@ public class ChatActivity extends AppCompatActivity {
                     return;
                 }
 
+                //responsePost = new PostAnswer();
+
                 responsePost = response.body();
 
+                //if (responsePost.isEmpty())
+                //    return;
+
+                if (response.body().isEmpty())
+                    return;
+
                 messageList.clear();
+
+
 
                 for (int i = 0; i < responsePost.getData().size(); i++) {
 
                     String text = responsePost.getData().get(i).getData();
-                    //String text = "";
 
-                    //text += "Sender: " + responsePost.getData().get(i).getSender();
-                    //text += "\n" + "Recipient: " + responsePost.getData().get(i).getRecipient();
-                    //text += "\n" + "Mimetype: " + responsePost.getData().get(i).getMimeType();
-                    //text += "\n" + "Data: " + responsePost.getData().get(i).getData();
-                    //text += "\n" + "DateTime: " + responsePost.getData().get(i).getDateTime();
-                    //text += responsePost.getDataDetail(i).
-                    //String text += ""
                     messageList.add(new Message(text));
-                    //messageList.get(i).se
 
                 }
 

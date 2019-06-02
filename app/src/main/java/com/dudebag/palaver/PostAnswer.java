@@ -78,4 +78,10 @@ public class PostAnswer{
     public void setInfo(String info) {
         this.info = info;
     }
+
+    public boolean isEmpty() {
+        if (getData() == null)
+            return true;
+        else return false;
+    }
 }

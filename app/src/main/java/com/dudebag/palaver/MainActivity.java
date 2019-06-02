@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
               Post post = new Post(benutzername, passwort);
               getFriends(post);
 
+
               return;
 
             }
@@ -388,14 +389,5 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void saveData() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
 
-
-    }
-
-    public void setFriendList(ArrayList<Friend> friendList) {
-        this.friendList = friendList;
-    }
 }
