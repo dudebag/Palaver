@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_login"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".DeleteFriendActivity">
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:onClick="hideKeyboard">
+
+    </FrameLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg"
+        android:orientation="vertical">
+
+        <!-- Das hier in den linearlayout hier drüber reinmachen + auskommentierten linearlayout
+        android:layout_below="@+id/friendHeader"
+        -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="24dp"
+            android:fontFamily="@font/quicksand_bold"
+            android:gravity="center"
+            android:text="Bitte gib den Namen deines Freundes an"
+            android:textColor="#0F0F0F"
+            android:textSize="40dp" />
+
+        <EditText
+            android:id="@+id/friend_name_delete"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="40dp"
+            android:background="@drawable/bg_editext"
+            android:hint="Name"
+            android:paddingLeft="18dp"
+            android:textSize="28dp"/>
+
+        <Button
+            android:id="@+id/delete_friend_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/bg_btn"
+            android:text="Freund entfernen"
+            android:textSize="28dp"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>
