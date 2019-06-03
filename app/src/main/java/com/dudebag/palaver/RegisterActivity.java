@@ -46,8 +46,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     private Button buttonGPS;
 
-    private LocationManager locationManager;
-    private LocationListener locationListener;
+   private LocationManager locationManager;
+   private LocationListener locationListener;
 
     EditText et_benutzername;
     EditText et_passwort;
@@ -135,81 +135,16 @@ public class RegisterActivity extends AppCompatActivity {
 
 
         //GPS TEST
-/*
-        buttonGPS = findViewById(R.id.reg_GPS);
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
 
 
-                String gps = "\n" + location.getLatitude() + "" + location.getLongitude();
-                Toast.makeText(getApplicationContext(), gps, Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-
-            }
-        };
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //  Toast.makeText(getApplicationContext(),"Test10",Toast.LENGTH_LONG);
-            requestPermissions(new String[]{
-
-
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.INTERNET,
-
-
-            }, 10);
-
-
-        }
-        gpsButton();
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 10:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    gpsButton();
-                return;
-        }
-    }
-*/
+
     // rot unterstrichen ist in Ordnung, da die Abfrage dazu bei Aufruf bereits geklaert ist
 
 
-/*    private void gpsButton() {
-        Toast.makeText(getApplicationContext(), "Test213", Toast.LENGTH_LONG);
-        buttonGPS.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Test13", Toast.LENGTH_LONG);
-                locationManager.requestLocationUpdates("gps", 0, 3, locationListener);
 
-                Toast.makeText(getApplicationContext(), "Test1", Toast.LENGTH_LONG);
-
-
-            }
-        });
-       */
-    }
     @Override
     protected void onRestart() {
         super.onRestart();

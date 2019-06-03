@@ -4,21 +4,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -30,6 +35,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ChatActivity extends AppCompatActivity {
 
     ImageButton button;
+    ImageButton fileSelectbtn;
 
     EditText editText;
 
@@ -48,6 +54,9 @@ public class ChatActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
 
     @Override
@@ -72,12 +81,11 @@ public class ChatActivity extends AppCompatActivity {
         jsonApi = retrofit.create(JsonApi.class);
 
         editText = findViewById(R.id.input_message);
-
+        fileSelectbtn = findViewById(R.id.file_slct_btn);
         button = findViewById(R.id.send_msg_btn);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //Kein Internet
                 if (!checkInternet()) {
                     Toast.makeText(getApplicationContext(), "Du hast kein Internet", Toast.LENGTH_SHORT).show();
@@ -98,7 +106,6 @@ public class ChatActivity extends AppCompatActivity {
         messageList = new ArrayList<>();
 
 
-
         PostAnswer post = new PostAnswer(benutzername, passwort, user);
 
         getMessages(post);
@@ -115,7 +122,101 @@ public class ChatActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
+        switch (item.getItemId()) {
+
+            case R.id.gps:
+
+                locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+                locationListener = new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+
+
+                        String gps = "\n" + location.getLatitude() + "" + location.getLongitude();
+                        Toast.makeText(getApplicationContext(), gps, Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+                    }
+
+                    @Override
+                    public void onProviderEnabled(String s) {
+
+                    }
+
+                    @Override
+                    public void onProviderDisabled(String s) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
+
+                    }
+                };
+                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    //  Toast.makeText(getApplicationContext(),"Test10",Toast.LENGTH_LONG);
+                    requestPermissions(new String[]{
+
+
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.INTERNET,
+
+
+                    }, 10);
+
+
+                }
+                locationManager.requestLocationUpdates("gps", 0, 3, locationListener);
+
+                return true;
+
+
+
+
+
+
+
+
+
+
+
+
+            case R.id.image_menu:
+
+
+
+
+
+
+                return true;
+
+
+            case R.id.data_menu:
+                return true;
+
+
+            case R.id.speech_menu:
+                return true;
+
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void gpsButton() {
+        Toast.makeText(getApplicationContext(), "Test213", Toast.LENGTH_LONG);
+
+                Toast.makeText(getApplicationContext(), "Test1", Toast.LENGTH_LONG);
+
+
+
+
+    }
     private void sendMessage(PostMessage post) {
         Call<PostMessage> call = jsonApi.sendMessage(post);
 
@@ -177,7 +278,6 @@ public class ChatActivity extends AppCompatActivity {
                 messageList.clear();
 
 
-
                 for (int i = 0; i < responsePost.getData().size(); i++) {
 
                     String text = responsePost.getData().get(i).getData();
@@ -192,14 +292,12 @@ public class ChatActivity extends AppCompatActivity {
                     }
 
 
-
                 }
 
                 mRecyclerView = findViewById(R.id.private_messages);
                 mRecyclerView.setHasFixedSize(true);
                 mLayoutManager = new LinearLayoutManager(getApplicationContext());
                 mAdapter = new MessageAdapter(messageList);
-
 
 
                 //mAdapter.bindViewHolder();
@@ -227,15 +325,12 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-
-
     private boolean checkInternet() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-
 
 
 }

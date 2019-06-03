@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ChatActivity">
-    
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/private_messages"
         android:layout_width="match_parent"
@@ -36,7 +36,9 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:layout_weight="1"
-            android:src= "@drawable/ic_file_selection" />
+            android:src= "@drawable/ic_file_selection"
+
+            />
 
         <EditText
             android:id="@+id/input_message"
