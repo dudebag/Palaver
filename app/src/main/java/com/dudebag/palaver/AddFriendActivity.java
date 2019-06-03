@@ -91,7 +91,7 @@ public class AddFriendActivity extends AppCompatActivity {
             public void onResponse(Call<Post> call, Response<Post> response) {
 
                 if (!response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Fehler aufgetaucht", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Fehler aufgetaucht", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -151,10 +151,7 @@ public class AddFriendActivity extends AppCompatActivity {
         }
     }
 
-    public boolean validatePost(Post post) {
-       // if (post.)
-        return true;
-    }
+
 
     //Methode zum Frame Layout damit Tastatur verschwindet
     public void hideKeyboard(View view) {

@@ -194,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this.getApplicationContext(), AddFriendActivity.class);
         Intent intent2 = new Intent(this.getApplicationContext(), LoginActivity.class);
         Intent intent3 = new Intent(this.getApplicationContext(), DeleteFriendActivity.class);
+        Intent intent4 = new Intent(this.getApplicationContext(), ChangePasswordActivity.class);
         switch (item.getItemId()){
             case R.id.add_friend:
                 intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
@@ -204,6 +205,9 @@ public class MainActivity extends AppCompatActivity {
                 intent3.putExtra(EXTRA_BENUTZERNAME, benutzername);
                 intent3.putExtra(EXTRA_PASSWORT, passwort);
                 startActivity(intent3);
+                return true;
+            case R.id.change_password:
+                startActivity(intent4);
                 return true;
             case R.id.logout:
                 deleteData();

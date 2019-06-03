@@ -38,4 +38,7 @@ public interface JsonApi {
     @POST ("api/user/pushtoken")
     Call<Pushtoken> refreshToken(@Body Pushtoken pushtoken);
 
+    @POST ("api/user/password")
+    Call<PostChange> changePassword(@Body PostChange postChange);
+
 }

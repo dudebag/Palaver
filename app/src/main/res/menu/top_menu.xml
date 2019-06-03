@@ -15,6 +15,10 @@
         android:title="Freund entfernen"
         app:showAsAction="never" />
 
+    <item android:id="@+id/change_password"
+        android:title="Passwort ändern"
+        app:showAsAction="never" />
+
     <item android:id="@+id/logout"
         android:title="Ausloggen"
         app:showAsAction="never" />
