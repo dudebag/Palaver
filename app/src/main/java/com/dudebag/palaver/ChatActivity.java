@@ -1,5 +1,6 @@
 package com.dudebag.palaver;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -126,7 +127,7 @@ public class ChatActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-
+                    // zurzeit wird GPS als Toast gesendet
             case R.id.gps:
 
                 locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -156,7 +157,7 @@ public class ChatActivity extends AppCompatActivity {
 
                     }
                 };
-                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     //  Toast.makeText(getApplicationContext(),"Test10",Toast.LENGTH_LONG);
                     requestPermissions(new String[]{
 
@@ -170,7 +171,9 @@ public class ChatActivity extends AppCompatActivity {
 
 
                 }
-                locationManager.requestLocationUpdates("gps", 0, 3, locationListener);
+                if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED) {
+                    locationManager.requestLocationUpdates("gps", 0, 3, locationListener);
+                }
 
                 return true;
 
@@ -208,14 +211,17 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    private void gpsButton() {
-        Toast.makeText(getApplicationContext(), "Test213", Toast.LENGTH_LONG);
 
-                Toast.makeText(getApplicationContext(), "Test1", Toast.LENGTH_LONG);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 10:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
 
-
-
-
+                    //KEIN FEHLER NICHT RESOLVEN ist in Ordnung, dass rot angezeigt wird
+                    locationManager.requestLocationUpdates("gps", 0, 3, locationListener);
+                return;
+        }
     }
     private void sendMessage(PostMessage post) {
         Call<PostMessage> call = jsonApi.sendMessage(post);
