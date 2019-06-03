@@ -208,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.logout:
                 deleteData();
                 startActivity(intent2);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -493,5 +494,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
+        //öffne Homescreen wenn Zurück-Taste gedrückt wird
+        Intent a = new Intent(Intent.ACTION_MAIN);
+        a.addCategory(Intent.CATEGORY_HOME);
+        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(a);
     }
 }

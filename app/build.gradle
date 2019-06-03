@@ -49,4 +49,3 @@ dependencies {
 
 //Google Play services Gradle Plugin
 apply plugin: 'com.google.gms.google-services'
-

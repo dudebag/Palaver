@@ -1,5 +1,6 @@
 package com.dudebag.palaver;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +43,21 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
         Message currentMessage = mMessageList.get(position);
 
+        if (mMessageList.get(position).isOwn()) {
+            holder.mTextView.setGravity(Gravity.RIGHT);
+        }
+
+        else {
+            holder.mTextView.setGravity(Gravity.LEFT);
+        }
+        //else {
+            //holder.mTextView.setGravity(Gravity.START);
+        //}
         holder.mTextView.setText(currentMessage.getText());
+
+
+
+
         //holder.mTextView.setGravity();
     }
 

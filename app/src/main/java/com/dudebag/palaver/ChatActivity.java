@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -88,8 +89,9 @@ public class ChatActivity extends AppCompatActivity {
                 PostAnswer post = new PostAnswer(benutzername, passwort, user);
 
                 sendMessage(post2);
-                Toast.makeText(getApplicationContext(), "ID: " + benutzername + "\n" + "PW: " + passwort, Toast.LENGTH_LONG).show();
                 getMessages(post);
+
+                editText.setText("");
             }
         });
 
@@ -136,12 +138,13 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<PostMessage> call, Throwable t) {
-                if (t instanceof IOException)
+                /*if (t instanceof IOException)
                     Toast.makeText(getApplicationContext(), "2: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 else if (t instanceof IllegalStateException)
                     Toast.makeText(getApplicationContext(), "3: " + t.getMessage(), Toast.LENGTH_LONG).show();
                 else
-                    Toast.makeText(getApplicationContext(), "4: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "4: " + t.getMessage(), Toast.LENGTH_LONG).show();*/
+                Log.d("HELP", t.getMessage());
 
             }
         });
@@ -179,7 +182,16 @@ public class ChatActivity extends AppCompatActivity {
 
                     String text = responsePost.getData().get(i).getData();
 
-                    messageList.add(new Message(text));
+                    //wenn Nachricht von uns selbst geschrieben
+                    if (responsePost.getData().get(i).getSender().equals(benutzername)) {
+                        messageList.add(new Message(text, true));
+                    }
+                    //Nachricht von dem anderen geschrieben
+                    else {
+                        messageList.add(new Message(text, false));
+                    }
+
+
 
                 }
 
@@ -187,6 +199,8 @@ public class ChatActivity extends AppCompatActivity {
                 mRecyclerView.setHasFixedSize(true);
                 mLayoutManager = new LinearLayoutManager(getApplicationContext());
                 mAdapter = new MessageAdapter(messageList);
+
+
 
                 //mAdapter.bindViewHolder();
 
