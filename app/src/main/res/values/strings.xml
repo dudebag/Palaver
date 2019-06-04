@@ -1,4 +1,30 @@
 <resources>
+
+
     <string name="app_name">Palaver</string>
     <string name="addFriend_activity">Freund hinzufügen</string>
+
+    <string name="error">Error:</string>
+    <string name="error1">Es besteht keine Internetverbindung</string>
+    <string name="error2">Benutzer existiert bereits</string>
+    <string name="error3">Benutzername fehlt</string>
+    <string name="error4">Passwort fehlt</string>
+    <string name="error5">Benutzername und Passwort fehlen</string>
+    <string name="error6">Passwort nicht korrekt</string>
+    <string name="error7">Benutzer existiert nicht</string>
+    <string name="error8">Freund dem System nicht bekannt</string>
+    <string name="error9">Freund bereits auf der Liste</string>
+    <string name="error10">Freund nicht auf der Liste</string>
+    <string name="error11">Alle Felder müssen ausgefüllt werden</string>
+    <string name="error12">Benutzername nicht korrekt</string>
+    <string name="error13">Dein neues Passwort muss sich von deinem alten Passwort unterscheiden</string>
+
+    <string name="msg1">Benutzer erfolgreich registriert</string>
+    <string name="msg2">Pushtoken erfolgreich aktualisiert</string>
+    <string name="msg3">Freund hinzugefügt</string>
+    <string name="msg4">Freund entfernt</string>
+    <string name="msg5">Passwort erfolgreich geändert</string>
+
+
+
 </resources>

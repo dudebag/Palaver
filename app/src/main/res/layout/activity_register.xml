@@ -17,30 +17,7 @@
 
     </FrameLayout>
 
-    <Button
-        android:id="@+id/reg_GPS"
-        android:layout_width="wrap_content"
-        android:layout_height="32dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="16dp"
 
-        android:background="@drawable/bg_btn"
-        android:text="GPS"
-        android:textColor="#0F0F0F"
-        android:textSize="12dp" />
-
-    <TextView
-        android:id="@+id/reg_GPStxt"
-        android:layout_width="600dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/quicksand_book"
-        android:text="GPS"
-        android:textColor="#0F0F0F"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="120dp"
-        android:layout_marginRight="16dp"
-        android:textSize="12dp" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -114,17 +91,6 @@
                 android:text="Sie sind bereits registriert ?"
                 android:textColor="#0F0F0F"
                 android:textSize="16dp" />
-
-            <!-- Das wäre nur ein Text, kein Button
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:fontFamily="@font/quicksand_bold"
-                android:text="Login"
-                android:textColor="#0F0F0F"
-                android:textSize="16dp" />
-             -->
 
             <Button
                 android:id="@+id/reg_Login"

@@ -34,8 +34,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String EXTRA_BENUTZERNAME = "com.dudebag.palaver.EXTRA_TEXT";
-    public static final String EXTRA_PASSWORT = "com.dudebag.palaver.EXTRA_PASSWORT";
     public static final String EXTRA_USER = "com.dudebag.palaver.EXTRA_User";
 
     public static final String SHARED_PREFS = "sharedPrefs";
@@ -64,10 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
     public ArrayList<Friend> friendList;
 
-    String error1 = "Freund dem System nicht bekannt";
-    String error2 = "Freund bereits auf der Liste";
 
-    String msg1 = "Freund hinzugefügt";
 
 
     @Override
@@ -87,8 +82,6 @@ public class MainActivity extends AppCompatActivity {
         jsonApi = retrofit.create(JsonApi.class);
 
         friendList = new ArrayList<>();
-
-        //responsePost = new Post();
 
         loadFirstLogin();
 
@@ -161,8 +154,6 @@ public class MainActivity extends AppCompatActivity {
 
                         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
 
-                        intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
-                        intent.putExtra(EXTRA_PASSWORT, passwort);
                         intent.putExtra(EXTRA_USER, friendList.get(position).getName());
 
                         startActivity(intent);
@@ -197,19 +188,17 @@ public class MainActivity extends AppCompatActivity {
         Intent intent4 = new Intent(this.getApplicationContext(), ChangePasswordActivity.class);
         switch (item.getItemId()){
             case R.id.add_friend:
-                intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
-                intent.putExtra(EXTRA_PASSWORT, passwort);
                 startActivity(intent);
                 return true;
             case R.id.delete_friend:
-                intent3.putExtra(EXTRA_BENUTZERNAME, benutzername);
-                intent3.putExtra(EXTRA_PASSWORT, passwort);
                 startActivity(intent3);
                 return true;
             case R.id.change_password:
                 startActivity(intent4);
                 return true;
             case R.id.logout:
+                Pushtoken empty = new Pushtoken(benutzername, passwort, "");
+                refreshToken(empty);
                 deleteData();
                 startActivity(intent2);
                 finish();
@@ -265,8 +254,6 @@ public class MainActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
 
-                    intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
-                    intent.putExtra(EXTRA_PASSWORT, passwort);
                     intent.putExtra(EXTRA_USER, friendList.get(position).getName());
 
                     startActivity(intent);
@@ -293,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<Post> call, Response<Post> response) {
 
                 if (!response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Fehler aufgetaucht", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.error) + response.message(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -312,8 +299,6 @@ public class MainActivity extends AppCompatActivity {
                 mLayoutManager = new LinearLayoutManager(getApplicationContext());
                 mAdapter = new FriendAdapter(friendList);
 
-                //setFriendList(friendList);
-
                 mRecyclerView.setLayoutManager(mLayoutManager);
                 mRecyclerView.setAdapter(mAdapter);
 
@@ -328,8 +313,6 @@ public class MainActivity extends AppCompatActivity {
 
                         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
 
-                        intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
-                        intent.putExtra(EXTRA_PASSWORT, passwort);
                         intent.putExtra(EXTRA_USER, friendList.get(position).getName());
 
                         startActivity(intent);
@@ -342,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.error) + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -359,19 +342,19 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<Pushtoken> call, Response<Pushtoken> response) {
 
                 if (!response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Fehler bei Token", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.error) + response.message(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 Pushtoken responseBody3 = response.body();
 
                 if (responseBody3.getMsgType() == 1) {
-                    //Toast.makeText(getApplicationContext(), responseBody3.getInfo(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), responseBody3.getInfo(), Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
                 else {
-                    String help = "MsgType: " + responseBody3.getMsgType() + "\n" + "Info: " + responseBody3.getInfo() + "\n" + "Data: " + responseBody3.getData();
-                    Toast.makeText(getApplicationContext(), help, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.error) + responseBody3.getInfo(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -381,8 +364,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Pushtoken> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Token Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-
+                Toast.makeText(getApplicationContext(), getString(R.string.error) + t.getMessage(), Toast.LENGTH_SHORT).show();
+                return;
             }
         });
 
@@ -471,7 +454,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<InstanceIdResult> task) {
                 if (!task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "replaceToken fehlgeschlagen", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Replace Token fehlgeschlagen", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -479,7 +462,6 @@ public class MainActivity extends AppCompatActivity {
 
                 saveToken(token);
 
-                //Toast.makeText(getApplicationContext(), "TOKEN: " + token, Toast.LENGTH_LONG).show();
                 return;
             }
         });

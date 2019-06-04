@@ -50,15 +50,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         else {
             holder.mTextView.setGravity(Gravity.LEFT);
         }
-        //else {
-            //holder.mTextView.setGravity(Gravity.START);
-        //}
+
+
         holder.mTextView.setText(currentMessage.getText());
 
-
-
-
-        //holder.mTextView.setGravity();
     }
 
     @Override

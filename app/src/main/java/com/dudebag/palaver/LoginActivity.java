@@ -26,35 +26,18 @@ public class LoginActivity extends AppCompatActivity {
 
     private Button buttonLogin;
 
-    public static final String EXTRA_BENUTZERNAME = "com.dudebag.palaver.EXTRA_TEXT";
-    public static final String EXTRA_PASSWORT = "com.dudebag.palaver.EXTRA_PASSWORT";
-
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String PALAVER_ID = "palaver_id";
     public static final String PALAVER_PW = "palaver_pw";
     public static final String LOGGED_IN = "logged_in";
     public static final String FROM_LOGIN = "from_login";
 
-    boolean loggedIn;
-    boolean fromLogin;
 
     EditText et_benutzername;
     EditText et_passwort;
 
     String benutzername;
     String passwort;
-
-    final String error1 = "Error Code: ";
-    //String error2 = "Benutzer existiert bereits";
-    final String error3 = "Benutzername oder Passwort falsch";
-    final String error4 = "Passwort nicht korrekt";
-    final String error5 = "Benutzer existiert nicht";
-    final String error6 = "Es besteht keine Internetverbindung";
-
-    final String msg1 = "Benutzer erfolgreich validiert";
-    final String msg2 = "Benutzername fehlt";
-    final String msg3 = "Passwort fehlt";
-    final String msg4 = "Benutzername und Passwort fehlen";
 
     JsonApi jsonApi;
 
@@ -93,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 if (!checkInternet()) {
-                    Toast.makeText(getApplicationContext(), error6, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), R.string.error1, Toast.LENGTH_SHORT).show();
 
                     //Passwordfeld löschen
                     et_passwort.setText("");
@@ -105,9 +88,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 Post post = new Post(benutzername, passwort);
-
-                //post.setUsername(benutzername);
-                //post.setPassword(passwort);
 
                 processLogin(post);
 
@@ -143,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(Call<Post> call, Response<Post> response) {
 
                 if(!response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), error1 + response.code(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.error) + response.code(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -151,32 +131,32 @@ public class LoginActivity extends AppCompatActivity {
 
                 //Benutzer erfolgreich validiert
                 if (responsePost.getMsgType() == 1) {
-                    //Toast.makeText(getApplicationContext(), msg1, Toast.LENGTH_LONG).show();
 
                     saveData();
 
-                    //Benutzername und Passwort werden in die nächste Activity übergeben
-                    intent.putExtra(EXTRA_BENUTZERNAME, benutzername);
-                    intent.putExtra(EXTRA_PASSWORT, passwort);
                     startActivity(intent);
                 }
+
                 //Passwort nicht korrekt
-                else if (responsePost.getMsgType() == 0 && responsePost.getInfo().equals(error4)){
-                    Toast.makeText(getApplicationContext(), error4, Toast.LENGTH_LONG).show();
+                else if (responsePost.getMsgType() == 0 && responsePost.getInfo().equals(getString(R.string.error6))){
+                    Toast.makeText(getApplicationContext(), R.string.error6, Toast.LENGTH_SHORT).show();
                     //Passwort-Feld wird bei falscher Eingabe gelöscht
                     et_passwort.setText("");
                     return;
                 }
+
                 //Benutzer existiert nicht
-                else if (responsePost.getMsgType() == 0 && responsePost.getInfo().equals(error5)){
-                    Toast.makeText(getApplicationContext(), error5, Toast.LENGTH_LONG).show();
+                else if (responsePost.getMsgType() == 0 && responsePost.getInfo().equals(getString(R.string.error7))){
+                    Toast.makeText(getApplicationContext(), R.string.error7, Toast.LENGTH_SHORT).show();
                     //Passwort-Feld wird bei falscher Eingabe gelöscht
+                    et_benutzername.setText("");
                     et_passwort.setText("");
+                    et_benutzername.requestFocus();
                     return;
                 }
                 //Random Nachricht vom Server
                 else {
-                    Toast.makeText(getApplicationContext(), error1 + responsePost.getInfo(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.error) + responsePost.getInfo(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -186,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.error) + t.getMessage(), Toast.LENGTH_SHORT).show();
                 return;
             }
         });
@@ -202,15 +182,15 @@ public class LoginActivity extends AppCompatActivity {
 
     public boolean validateForm(){
         if (benutzername.isEmpty() && !passwort.isEmpty()) {
-            Toast.makeText(getApplicationContext(), msg2, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.error3, Toast.LENGTH_SHORT).show();
             return false;
         }
         else if (!benutzername.isEmpty() && passwort.isEmpty()) {
-            Toast.makeText(getApplicationContext(), msg3, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.error4, Toast.LENGTH_SHORT).show();
             return false;
         }
         else if (benutzername.isEmpty() && passwort.isEmpty()) {
-            Toast.makeText(getApplicationContext(), msg4, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.error5, Toast.LENGTH_SHORT).show();
             return false;
         }
         else {

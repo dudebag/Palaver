@@ -21,14 +21,8 @@ public class Post {
     @SerializedName("Info")
     private String info;
 
-    //@SerializedName("Data")
-    //private String data [];
-
     @SerializedName("Data")
     private List<String> data;
-
-    //@SerializedName("Data")
-    //private String data2;
 
     @SerializedName("PushToken")
     private String pushToken;

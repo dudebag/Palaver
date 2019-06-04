@@ -5,9 +5,10 @@ public class Message {
     private String text;
     private boolean own;
 
-    //public Message(String text) {
-    //    this.text = text;
-    //}
+    public Message(String text, boolean own) {
+        this.text = text;
+        this.own = own;
+    }
 
     public String getText() {
         return text;
@@ -25,8 +26,5 @@ public class Message {
         this.own = own;
     }
 
-    public Message(String text, boolean own) {
-        this.text = text;
-        this.own = own;
-    }
+
 }

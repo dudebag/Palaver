@@ -34,35 +34,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    //Variablen um Cursor aus Eingabefeldern zu nehmen
-    private Context mContext;
-    private Activity mActivity;
-    private RelativeLayout mCLayout;
-    private EditText mEditText;
-
-
     private Button buttonRegister;
     private Button buttonLogin;
 
-    private Button buttonGPS;
 
-   private LocationManager locationManager;
-   private LocationListener locationListener;
 
     EditText et_benutzername;
     EditText et_passwort;
 
     String benutzername;
     String passwort;
-
-    String error1 = "Error Code: ";
-    String error2 = "Benutzer existiert bereits";
-    String error3 = "Es besteht keine Internetverbindung";
-
-    String msg2 = "Benutzername fehlt";
-    String msg3 = "Passwort fehlt";
-    String msg4 = "Benutzername und Passwort fehlen";
-    String msg5 = "Benutzer erfolgreich registriert";
 
     JsonApi jsonApi;
 
@@ -101,7 +82,7 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 if (!checkInternet()) {
-                    Toast.makeText(getApplicationContext(), error3, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), R.string.error1, Toast.LENGTH_SHORT).show();
 
                     //Passwordfeld löschen
                     et_passwort.setText("");
@@ -113,9 +94,6 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 Post post = new Post(benutzername, passwort);
-
-                //post.setUsername(benutzername);
-                //post.setPassword(passwort);
 
                 processRegistration(post);
 
@@ -134,82 +112,9 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
 
-        //GPS TEST
-/*
-        buttonGPS = findViewById(R.id.reg_GPS);
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-
-
-                String gps = "\n" + location.getLatitude() + "" + location.getLongitude();
-                Toast.makeText(getApplicationContext(), gps, Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-
-            }
-        };
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //  Toast.makeText(getApplicationContext(),"Test10",Toast.LENGTH_LONG);
-            requestPermissions(new String[]{
-
-
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.INTERNET,
-
-
-            }, 10);
-
-
-        }
-        gpsButton();
-*/
     }
-/*
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-            switch (requestCode) {
-                case 10:
-                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                        gpsButton();
-                    return;
-            }
-    }
-*/
-    // rot unterstrichen ist in Ordnung, da die Abfrage dazu bei Aufruf bereits geklaert ist
-
-/*
-   private void gpsButton() {
-        Toast.makeText(getApplicationContext(), "Test213", Toast.LENGTH_LONG);
-        buttonGPS.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Test13", Toast.LENGTH_LONG);
-                locationManager.requestLocationUpdates("gps", 0, 3, locationListener);
-
-                Toast.makeText(getApplicationContext(), "Test1", Toast.LENGTH_LONG);
 
 
-            }
-        });
-    }
-    */
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -236,7 +141,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                 //wenn nicht successfull
                 if (!response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), error1 + response.code(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.error) + response.code(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -244,18 +149,18 @@ public class RegisterActivity extends AppCompatActivity {
 
                 //Benutzer erfolgreich angelegt
                 if (responsePost.getMsgType() == 1) {
-                    Toast.makeText(getApplicationContext(), msg5, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.msg1, Toast.LENGTH_SHORT).show();
                     startActivity(intent);
                     return;
                 }
                 //Benutzer existiert bereits
                 else if (responsePost.getMsgType() == 0) {
-                    Toast.makeText(getApplicationContext(), error2, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.error2, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 //Random Nachricht vom Server
                 else {
-                    Toast.makeText(getApplicationContext(), error1 + responsePost.getInfo(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.error + responsePost.getInfo(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -263,7 +168,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.error) + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -277,13 +182,13 @@ public class RegisterActivity extends AppCompatActivity {
 
     public boolean validateForm() {
         if (benutzername.isEmpty() && !passwort.isEmpty()) {
-            Toast.makeText(getApplicationContext(), msg2, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.error3, Toast.LENGTH_SHORT).show();
             return false;
         } else if (!benutzername.isEmpty() && passwort.isEmpty()) {
-            Toast.makeText(getApplicationContext(), msg3, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.error4, Toast.LENGTH_SHORT).show();
             return false;
         } else if (benutzername.isEmpty() && passwort.isEmpty()) {
-            Toast.makeText(getApplicationContext(), msg4, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.error5, Toast.LENGTH_SHORT).show();
             return false;
         } else {
             return true;
@@ -304,67 +209,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-
-   /* public void sendGps() {
-
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-
-                Toast.makeText(getApplicationContext(), ("\n" + location.getLatitude() + " " + location.getLongitude()), Toast.LENGTH_LONG).show();
-
-
-
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-
-            }
-        };
-
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{
-
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.INTERNET
-
-            }, 10);
-
-            return;
-        }
-
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-
-
-        // 10 is random gewhaehlt
-            case 10:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                        return;
-                    }locationManager.requestLocationUpdates("gps", 5000, 5, locationListener);
-
-       }
-    } */
 
 
 }

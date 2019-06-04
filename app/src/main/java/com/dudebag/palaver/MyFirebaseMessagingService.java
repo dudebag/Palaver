@@ -54,13 +54,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
 
 
-            //remoteMessage.n
             if (remoteMessage != null)
             //generateNotification(remoteMessage.getNotification().getBody(), remoteMessage.getNotification().getTitle());
                 generateNotification("Du hast eine neue Nachricht erhalten", "Palaver");
 
             else {
-                //Toast.makeText(this, "HALULULUL", Toast.LENGTH_LONG).show();
                 Log.d(TAG, "PENISPUMPE");
             }
 
@@ -97,9 +95,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
 
-
-
-
     @Override
     public void onNewToken(String s) {
         //super.onNewToken(s);
@@ -107,9 +102,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         saveToken(s);
         Log.d(TAG, "TOKEN SAVED");
     }
-
-
-
 
 
 

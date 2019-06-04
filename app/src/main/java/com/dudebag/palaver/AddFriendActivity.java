@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -20,7 +21,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AddFriendActivity extends AppCompatActivity {
 
-
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String PALAVER_ID = "palaver_id";
+    public static final String PALAVER_PW = "palaver_pw";
 
     private Button button;
 
@@ -35,11 +38,6 @@ public class AddFriendActivity extends AppCompatActivity {
 
     String nameInput;
 
-    final String msg1 = "Freund hinzugefügt";
-
-    final String error1 = "Error Code: ";
-    final String error2 = "Freund dem System nicht bekannt";
-    final String error3 = "Freund bereits auf der Liste";
 
 
     @Override
@@ -56,10 +54,7 @@ public class AddFriendActivity extends AppCompatActivity {
         //Gson Konverter einrichten
         jsonApi = retrofit.create(JsonApi.class);
 
-        //Benutzername und Passwort wird in Empfang genommen
-        Intent intent = getIntent();
-        benutzername = intent.getStringExtra(MainActivity.EXTRA_BENUTZERNAME);
-        passwort = intent.getStringExtra(MainActivity.EXTRA_PASSWORT);
+        loadData();
 
         button = findViewById(R.id.addFriend);
         et_nameInput = findViewById(R.id.friendName);
@@ -67,15 +62,17 @@ public class AddFriendActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 hideKeyboardButton();
                 fillForm();
+
                 if (!validateForm()) {
                     return;
                 }
+
                 else {
                     Post post = new Post(benutzername, passwort, nameInput);
                     addFriends(post);
-                    //Toast.makeText(getApplicationContext(), error2, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -91,7 +88,7 @@ public class AddFriendActivity extends AppCompatActivity {
             public void onResponse(Call<Post> call, Response<Post> response) {
 
                 if (!response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Fehler aufgetaucht", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.error) + response.message(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -104,22 +101,22 @@ public class AddFriendActivity extends AppCompatActivity {
 
                     //Freund hinzugefügt
                     if (responsePost.getMsgType() == 1) {
-                        Toast.makeText(getApplicationContext(), msg1, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), R.string.msg3, Toast.LENGTH_SHORT).show();
                         return;
                     }
                     //Freund dem System nicht bekannt
-                    else if (responsePost.getMsgType() == 0 && responsePost.getInfo().equals(error2)) {
-                        Toast.makeText(getApplicationContext(), error2, Toast.LENGTH_LONG).show();
+                    else if (responsePost.getMsgType() == 0 && responsePost.getInfo().equals(getString(R.string.error8))) {
+                        Toast.makeText(getApplicationContext(), R.string.error8, Toast.LENGTH_SHORT).show();
                         return;
                     }
                     //Freund bereits auf der Liste
-                    else if (responsePost.getMsgType() == 0 && responsePost.getInfo().equals(error3)) {
-                        Toast.makeText(getApplicationContext(), error3, Toast.LENGTH_LONG).show();
+                    else if (responsePost.getMsgType() == 0 && responsePost.getInfo().equals(getString(R.string.error9))) {
+                        Toast.makeText(getApplicationContext(), R.string.error9, Toast.LENGTH_SHORT).show();
                         return;
                     }
                     //Random Nachricht vom Server
                     else {
-                        Toast.makeText(getApplicationContext(), error1 + responsePost.getInfo(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), getString(R.string.error) + responsePost.getInfo(), Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -130,9 +127,7 @@ public class AddFriendActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
-
-                //textViewResult.setText(t.getMessage());
-                Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.error) + t.getMessage(), Toast.LENGTH_SHORT).show();
                 return;
             }
         });
@@ -167,4 +162,15 @@ public class AddFriendActivity extends AppCompatActivity {
             inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
+
+    public void loadData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        benutzername = sharedPreferences.getString(PALAVER_ID, "");
+        passwort = sharedPreferences.getString(PALAVER_PW, "");
+
+    }
+
+
+
 }

@@ -88,6 +88,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     PostChange postChange = new PostChange(id, pw, newPw);
 
                     changePassword(postChange);
+                    return;
                 }
             }
         });
@@ -104,7 +105,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             public void onResponse(Call<PostChange> call, Response<PostChange> response) {
 
                 if (!response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Fehler aufgetaucht", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.error) + response.message(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -114,12 +115,12 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     if (responsePost.getMsgType() == 1) {
                         saveData();
                         loadData();
-                        Toast.makeText(getApplicationContext(), "Passwort erfolgreich aktualisiert", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), R.string.msg5, Toast.LENGTH_SHORT).show();
                         return;
                     }
 
                     else {
-                        Toast.makeText(getApplicationContext(), responsePost.getInfo(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), getString(R.string.error) + responsePost.getInfo(), Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -129,7 +130,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<PostChange> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.error) + t.getMessage(), Toast.LENGTH_SHORT).show();
                 return;
             }
         });
@@ -163,22 +164,22 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
     public boolean validateForm() {
         if (id.isEmpty() || pw.isEmpty() || newPw.isEmpty()) {
-            Toast.makeText(this, "Bitte fülle alle Felder aus", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error11, Toast.LENGTH_SHORT).show();
             return false;
         }
         else if (!id.equals(benutzername)) {
-            Toast.makeText(this, "Falscher Benutzername", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error12, Toast.LENGTH_SHORT).show();
             et_id.setText("");
             et_id.requestFocus();
             return false;
         }
         else if (!pw.equals(passwort)) {
-            Toast.makeText(this, "Falsches Passwort", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error6, Toast.LENGTH_SHORT).show();
             et_pw.requestFocus();
             return false;
         }
         else if (newPw.equals(passwort)) {
-            Toast.makeText(this, "Dein neues Passwort muss sich von deinem alten Passwort unterscheiden", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.error13, Toast.LENGTH_SHORT).show();
             et_pw.requestFocus();
             return false;
         }

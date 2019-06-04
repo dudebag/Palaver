@@ -29,8 +29,6 @@ public class Pushtoken {
         this.pushToken = pushToken;
     }
 
-
-
     public String getUsername() {
         return username;
     }

@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -34,6 +36,10 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ChatActivity extends AppCompatActivity {
+
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String PALAVER_ID = "palaver_id";
+    public static final String PALAVER_PW = "palaver_pw";
 
     ImageButton button;
     ImageButton fileSelectbtn;
@@ -65,11 +71,10 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        loadData();
 
         //Benutzername und Passwort wird in Empfang genommen
         Intent intent = getIntent();
-        benutzername = intent.getStringExtra(MainActivity.EXTRA_BENUTZERNAME);
-        passwort = intent.getStringExtra(MainActivity.EXTRA_PASSWORT);
         user = intent.getStringExtra(MainActivity.EXTRA_USER);
 
         //Retrofit einrichten
@@ -137,7 +142,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
                         String gps = "\n" + location.getLatitude() + "" + location.getLongitude();
-                        Toast.makeText(getApplicationContext(), gps, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), gps, Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -158,7 +163,7 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 };
                 if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    //  Toast.makeText(getApplicationContext(),"Test10",Toast.LENGTH_LONG);
+                    //  Toast.makeText(getApplicationContext(),"Test10",Toast.LENGTH_SHORT).show();
                     requestPermissions(new String[]{
 
 
@@ -179,22 +184,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
 
-
-
-
-
-
-
-
-
-
             case R.id.image_menu:
-
-
-
-
-
-
                 return true;
 
 
@@ -212,6 +202,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -230,28 +221,29 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<PostMessage> call, Response<PostMessage> response) {
                 if (!response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "1: " + response.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.error) + response.message(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 responsePost2 = response.body();
 
                 if (responsePost2.getMsgType() == 1) {
-                    Toast.makeText(getApplicationContext(), "MsgType: " + responsePost2.getMsgType() + "\n" + "Info: " + responsePost2.getInfo(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "MsgType: " + responsePost2.getMsgType() + "\n" + "Info: " + responsePost2.getInfo(), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), "MsgType: " + responsePost2.getMsgType() + "\n" + "Info: " + responsePost2.getInfo(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "MsgType: " + responsePost2.getMsgType() + "\n" + "Info: " + responsePost2.getInfo(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<PostMessage> call, Throwable t) {
                 /*if (t instanceof IOException)
-                    Toast.makeText(getApplicationContext(), "2: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "2: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 else if (t instanceof IllegalStateException)
-                    Toast.makeText(getApplicationContext(), "3: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "3: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 else
-                    Toast.makeText(getApplicationContext(), "4: " + t.getMessage(), Toast.LENGTH_LONG).show();*/
-                Log.d("HELP", t.getMessage());
+                    Toast.makeText(getApplicationContext(), "4: " + t.getMessage(), Toast.LENGTH_SHORT).show();*/
+                Toast.makeText(getApplicationContext(), getString(R.string.error) + t.getMessage(), Toast.LENGTH_SHORT).show();
+                return;
 
             }
         });
@@ -267,16 +259,11 @@ public class ChatActivity extends AppCompatActivity {
             public void onResponse(Call<PostAnswer> call, Response<PostAnswer> response) {
 
                 if (!response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Fehler aufgetaucht", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.error) + response.message(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                //responsePost = new PostAnswer();
-
                 responsePost = response.body();
-
-                //if (responsePost.isEmpty())
-                //    return;
 
                 if (response.body().isEmpty())
                     return;
@@ -306,17 +293,8 @@ public class ChatActivity extends AppCompatActivity {
                 mAdapter = new MessageAdapter(messageList);
 
 
-                //mAdapter.bindViewHolder();
-
                 mRecyclerView.setLayoutManager(mLayoutManager);
                 mRecyclerView.setAdapter(mAdapter);
-
-
-                /*String text = "";
-                text += "Code: " + response.code() + "\n";
-                text += "MsgType: " + responsePost.getMsgType() + "\n";
-                text += "Info: " + responsePost.getInfo() + "\n";
-                text += "Data: " + "\n";*/
 
 
                 return;
@@ -325,7 +303,7 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<PostAnswer> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "5: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.error) + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -336,6 +314,14 @@ public class ChatActivity extends AppCompatActivity {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+
+    public void loadData() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        benutzername = sharedPreferences.getString(PALAVER_ID, "");
+        passwort = sharedPreferences.getString(PALAVER_PW, "");
+
     }
 
 
