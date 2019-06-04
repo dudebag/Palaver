@@ -29,52 +29,60 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="3"
             android:layout_gravity="center"
             android:fontFamily="@font/quicksand_bold"
             android:text="Login"
             android:textColor="#0F0F0F"
-            android:textSize="32dp" />
+            android:textSize="32dp"
+            android:padding="16dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="2"
             android:layout_gravity="center"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/quicksand_bold"
             android:text="Bitte geben Sie ihre Login-Daten ein"
             android:textAlignment="center"
             android:textColor="#3A3A3A"
-            android:textSize="16dp" />
+            android:textSize="16dp"
+            android:padding="16dp"/>
 
         <EditText
             android:id="@+id/log_Benutzername"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
             android:layout_marginTop="40dp"
             android:background="@drawable/bg_editext"
             android:hint="Benutzername"
             android:inputType="text"
-            android:paddingLeft="16dp" />
+            android:padding="16dp"/>
 
         <EditText
             android:id="@+id/log_Passwort"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
             android:layout_marginTop="16dp"
             android:background="@drawable/bg_editext"
             android:hint="Passwort"
             android:inputType="textPassword"
-            android:paddingLeft="16dp" />
+            android:padding="16dp" />
 
         <Button
             android:id="@+id/log_Login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_weight="2"
+            android:layout_marginTop="16dp"
             android:background="@drawable/bg_btn"
             android:text="Login"
             android:textColor="#0F0F0F"
-            android:textSize="16dp" />
+            android:textSize="24dp"
+            android:padding="16dp"/>
 
 
     </LinearLayout>

@@ -4,7 +4,6 @@
     <string name="app_name">Palaver</string>
     <string name="addFriend_activity">Freund hinzufügen</string>
 
-    <string name="error">Error:</string>
     <string name="error1">Es besteht keine Internetverbindung</string>
     <string name="error2">Benutzer existiert bereits</string>
     <string name="error3">Benutzername fehlt</string>
