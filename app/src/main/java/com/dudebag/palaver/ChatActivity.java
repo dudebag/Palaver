@@ -169,6 +169,7 @@ public class ChatActivity extends AppCompatActivity {
 //                          Hardcoded Uni Adresse
 //                        String gpsUri= "http://maps.google.com/maps?daddr=" + "51.462980"+","
 //                                + "7.006340";
+
                         Intent intentGps = new Intent (Intent.ACTION_VIEW,Uri.parse(gpsUri));
                         startActivity(intentGps);
 
@@ -203,6 +204,7 @@ public class ChatActivity extends AppCompatActivity {
 
                     }
                 };
+
                 if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     //  Toast.makeText(getApplicationContext(),"Test10",Toast.LENGTH_SHORT).show();
                     requestPermissions(new String[]{
@@ -236,19 +238,6 @@ public class ChatActivity extends AppCompatActivity {
                return true;
 
 
-            case R.id.data_menu:
-//                    Intent intent = new Intent();
-//                    intent.setAction(Intent.ACTION_GET_CONTENT);
-//                    intent.setType("application/datei");
-//                    startActivityForResult(intent.createChooser(intent,"Wähle Datei"),20);
-
-
-
-                return true;
-
-
-           // case R.id.speech_menu:
-               // return true;
 
 
             default:
@@ -295,6 +284,7 @@ public class ChatActivity extends AppCompatActivity {
             PostMessage imgP= new PostMessage(benutzername,passwort,user,"1",encodedImage);
 
             sendMessage(imgP);
+
         }
     }
 
@@ -307,6 +297,8 @@ public class ChatActivity extends AppCompatActivity {
 
         return encImage;
     }
+
+
 
     private void sendMessage(PostMessage post) {
         Call<PostMessage> call = jsonApi.sendMessage(post);
@@ -370,6 +362,16 @@ public class ChatActivity extends AppCompatActivity {
                 switch (mime){
 
                     case 1:
+                        String imgS= response.message();
+
+
+//                        byte[] decodedString = Base64.decode(encodedImage,Base64.DEFAULT);
+//                        Bitmap decodedBit = BitmapFactory.decodeByteArray(decodedString,0,decodedString.length);
+//
+//                        // Toast.makeText(getApplicationContext(), "es sollte gleich kommen", Toast.LENGTH_SHORT).show();
+//
+//                        imgView.setImageBitmap(decodedBit);
+
 
 
                     default:
