@@ -1,23 +1,29 @@
 package com.dudebag.palaver;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,7 +33,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,12 +57,14 @@ public class ChatActivity extends AppCompatActivity {
 
     EditText editText;
 
+    Bitmap bitmap  ;
+
     String benutzername;
     String passwort;
     String user;
 
     JsonApi jsonApi;
-
+ //StorageReference a;
     ArrayList<Message> messageList;
     ArrayList<String> testList;
 
@@ -64,6 +77,13 @@ public class ChatActivity extends AppCompatActivity {
 
     private LocationManager locationManager;
     private LocationListener locationListener;
+
+    private Uri fileUri;
+    private   InputStream imageStream = null;
+    public ProgressDialog loadingBar;
+
+    //    private Storage
+
 
 
     @Override
@@ -128,6 +148,7 @@ public class ChatActivity extends AppCompatActivity {
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -141,8 +162,28 @@ public class ChatActivity extends AppCompatActivity {
                     public void onLocationChanged(Location location) {
 
 
-                        String gps = "\n" + location.getLatitude() + "" + location.getLongitude();
-                        Toast.makeText(getApplicationContext(), gps, Toast.LENGTH_SHORT).show();
+                        // muss noch in nen onclick eingebaut werden, der nach dem click auf die scheisse in maps läd weil sonst macht der durchgehend
+                        String gpsUri= "http://maps.google.com/maps?daddr=" + location.getLatitude()+","
+                                                                            + location.getLongitude();
+
+//                          Hardcoded Uni Adresse
+//                        String gpsUri= "http://maps.google.com/maps?daddr=" + "51.462980"+","
+//                                + "7.006340";
+                        Intent intentGps = new Intent (Intent.ACTION_VIEW,Uri.parse(gpsUri));
+                        startActivity(intentGps);
+
+
+
+
+//                        String gps = "\n" + location.getLatitude() + "" + location.getLongitude();
+
+
+
+//                        Toast.makeText(getApplicationContext(), gps, Toast.LENGTH_SHORT).show();
+//
+//                        String uri = String.format(Locale.ENGLISH, "geo:%f,%f", location.getLatitude(), location.getLatitude());
+//                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+//                        startActivity(intent);
                     }
 
                     @Override
@@ -172,7 +213,7 @@ public class ChatActivity extends AppCompatActivity {
                             Manifest.permission.INTERNET,
 
 
-                    }, 10);
+                }, 10);
 
 
                 }
@@ -184,16 +225,30 @@ public class ChatActivity extends AppCompatActivity {
 
 
 
-            case R.id.image_menu:
-                return true;
+           case R.id.image_menu:
+
+               Intent intent = new Intent();
+               intent.setAction(Intent.ACTION_GET_CONTENT);
+               intent.setType("image/*");
+               startActivityForResult(intent.createChooser(intent,"Wähle Foto"),20);
+
+
+               return true;
 
 
             case R.id.data_menu:
+//                    Intent intent = new Intent();
+//                    intent.setAction(Intent.ACTION_GET_CONTENT);
+//                    intent.setType("application/datei");
+//                    startActivityForResult(intent.createChooser(intent,"Wähle Datei"),20);
+
+
+
                 return true;
 
 
-            case R.id.speech_menu:
-                return true;
+           // case R.id.speech_menu:
+               // return true;
 
 
             default:
@@ -205,6 +260,7 @@ public class ChatActivity extends AppCompatActivity {
     @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
         switch (requestCode) {
             case 10:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
@@ -212,8 +268,46 @@ public class ChatActivity extends AppCompatActivity {
                     //KEIN FEHLER NICHT RESOLVEN ist in Ordnung, dass rot angezeigt wird
                     locationManager.requestLocationUpdates("gps", 0, 3, locationListener);
                 return;
+
+        }
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+       // Toast.makeText(getApplicationContext(), "om", Toast.LENGTH_SHORT).show();
+        if(requestCode == 20 &&  data!=null && data.getData()!= null){
+            Toast.makeText(getApplicationContext(), "om nom", Toast.LENGTH_SHORT).show();
+            fileUri = data.getData();
+            try {
+               imageStream = getContentResolver().openInputStream(fileUri);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            bitmap = BitmapFactory.decodeStream(imageStream);
+
+            //Image ist nun encodeter String
+            String encodedImage = encodeImage(bitmap);
+
+//            Toast.makeText(getApplicationContext(), encodedImage, Toast.LENGTH_SHORT).show();
+            PostMessage imgP= new PostMessage(benutzername,passwort,user,"1",encodedImage);
+
+            sendMessage(imgP);
         }
     }
+
+    private String encodeImage(Bitmap bitmap) {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG,100,baos);
+        byte[] b = baos.toByteArray();
+        String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+
+        return encImage;
+    }
+
     private void sendMessage(PostMessage post) {
         Call<PostMessage> call = jsonApi.sendMessage(post);
 
@@ -269,23 +363,34 @@ public class ChatActivity extends AppCompatActivity {
                     return;
 
                 messageList.clear();
+                int mime;
+                mime = (int) response.body().getMsgType();
 
 
-                for (int i = 0; i < responsePost.getData().size(); i++) {
+                switch (mime){
 
-                    String text = responsePost.getData().get(i).getData();
-
-                    //wenn Nachricht von uns selbst geschrieben
-                    if (responsePost.getData().get(i).getSender().equals(benutzername)) {
-                        messageList.add(new Message(text, true));
-                    }
-                    //Nachricht von dem anderen geschrieben
-                    else {
-                        messageList.add(new Message(text, false));
-                    }
+                    case 1:
 
 
+                    default:
+
+                        for (int i = 0; i < responsePost.getData().size(); i++) {
+
+                            String text = responsePost.getData().get(i).getData();
+
+                            //wenn Nachricht von uns selbst geschrieben
+                            if (responsePost.getData().get(i).getSender().equals(benutzername)) {
+                                messageList.add(new Message(text, true));
+                            }
+                            //Nachricht von dem anderen geschrieben
+                            else {
+                                messageList.add(new Message(text, false));
+                            }
+
+
+                        }
                 }
+
 
                 mRecyclerView = findViewById(R.id.private_messages);
                 mRecyclerView.setHasFixedSize(true);
