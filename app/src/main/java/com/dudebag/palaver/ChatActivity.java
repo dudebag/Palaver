@@ -82,7 +82,7 @@ public class ChatActivity extends AppCompatActivity {
     private   InputStream imageStream = null;
     public ProgressDialog loadingBar;
 
-    //    private Storage
+    //
 
 
 
