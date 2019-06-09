@@ -72,7 +72,7 @@ public class ChatActivity extends AppCompatActivity {
     PostMessage responsePost2;
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private MessageAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private LocationManager locationManager;
@@ -167,17 +167,7 @@ public class ChatActivity extends AppCompatActivity {
 
                         sendMessage(gpsString);
                         getMessages(messages);
-                        /*String gpsUri= "http://maps.google.com/maps?daddr=" + location.getLatitude()+","
-                                                                            + location.getLongitude();*/
 
-//
-                        //Intent intentGps = new Intent (Intent.ACTION_VIEW,Uri.parse(gpsUri));
-                        //startActivity(intentGps);
-
-
-
-
-//
                     }
 
                     @Override
@@ -363,22 +353,37 @@ public class ChatActivity extends AppCompatActivity {
                     //wenn Nachricht von uns selbst geschrieben
                     if (responsePost.getData().get(i).getSender().equals(benutzername)) {
 
+                        //GPS Nachricht
                         if (responsePost.getData().get(i).getMimeType().equals("gpsMessage")) {
 
                             String [] parts = responsePost.getData().get(i).getData().split("x");
                             String part1 = parts[0];
                             String part2 = parts[1];
-                            messageList.add(new Message(text, true, part1, part2));
+                            messageList.add(new Message(benutzername + "-Standort", true, part1, part2));
+                        }
+
+                        //Text Nachricht
+                        else {
+                            messageList.add(new Message(text, true, "", ""));
                         }
                     }
+
+
                     //Nachricht von dem anderen geschrieben
                     else {
+
+                        //GPS Nachricht
                         if (responsePost.getData().get(i).getMimeType().equals("gpsMessage")) {
 
                             String [] parts = responsePost.getData().get(i).getData().split("x");
                             String part1 = parts[0];
                             String part2 = parts[1];
-                            messageList.add(new Message(text, false, part1, part2));
+                            messageList.add(new Message(user + "-Standort", false, part1, part2));
+                        }
+
+                        //Text Nachricht
+                        else {
+                            messageList.add(new Message(text, false, "", ""));
                         }
                     }
 
@@ -394,6 +399,18 @@ public class ChatActivity extends AppCompatActivity {
 
                 mRecyclerView.setLayoutManager(mLayoutManager);
                 mRecyclerView.setAdapter(mAdapter);
+
+                mAdapter.setOnItemClickListener(new MessageAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+                        //wenn GPS ist
+                        if (!messageList.get(position).getX().equals("")) {
+                            String gpsUri= "http://maps.google.com/maps?daddr=" + messageList.get(position).getX() + "," + messageList.get(position).getY();
+                            Intent intentGps = new Intent (Intent.ACTION_VIEW,Uri.parse(gpsUri));
+                            startActivity(intentGps);
+                        }
+                    }
+                });
 
 
                 return;
