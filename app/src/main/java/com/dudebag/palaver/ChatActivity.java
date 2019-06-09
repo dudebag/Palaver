@@ -386,7 +386,6 @@ public class ChatActivity extends AppCompatActivity {
                 }
 
 
-
                 mRecyclerView = findViewById(R.id.private_messages);
                 mRecyclerView.setHasFixedSize(true);
                 mLayoutManager = new LinearLayoutManager(getApplicationContext());
