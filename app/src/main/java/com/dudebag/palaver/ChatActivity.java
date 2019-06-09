@@ -33,9 +33,13 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -51,6 +55,7 @@ public class ChatActivity extends AppCompatActivity {
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String PALAVER_ID = "palaver_id";
     public static final String PALAVER_PW = "palaver_pw";
+    public static final String MESSAGE_LIST = "message_list";
 
 
     ImageButton button;
@@ -65,7 +70,6 @@ public class ChatActivity extends AppCompatActivity {
     String user;
 
     JsonApi jsonApi;
- //StorageReference a;
     ArrayList<Message> messageList;
 
     PostAnswer responsePost;
@@ -80,9 +84,6 @@ public class ChatActivity extends AppCompatActivity {
 
     private Uri fileUri;
     private   InputStream imageStream = null;
-    public ProgressDialog loadingBar;
-
-    //
 
 
 
@@ -109,6 +110,7 @@ public class ChatActivity extends AppCompatActivity {
         editText = findViewById(R.id.input_message);
         fileSelectbtn = findViewById(R.id.file_slct_btn);
         button = findViewById(R.id.send_msg_btn);
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -215,9 +217,7 @@ public class ChatActivity extends AppCompatActivity {
                Intent intent = new Intent();
                intent.setAction(Intent.ACTION_GET_CONTENT);
                intent.setType("image/*");
-               startActivityForResult(intent.createChooser(intent,"Wähle Foto"),20);
-
-
+               startActivityForResult(intent.createChooser(intent,"Wähle ein Bild"),20);
                return true;
 
 
@@ -250,8 +250,8 @@ public class ChatActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
        // Toast.makeText(getApplicationContext(), "om", Toast.LENGTH_SHORT).show();
-        if(requestCode == 20 &&  data!=null && data.getData()!= null){
-            Toast.makeText(getApplicationContext(), "om nom", Toast.LENGTH_SHORT).show();
+        if(requestCode == 20 &&  data != null && data.getData() != null){
+
             fileUri = data.getData();
             try {
                imageStream = getContentResolver().openInputStream(fileUri);
@@ -263,11 +263,12 @@ public class ChatActivity extends AppCompatActivity {
             //Image ist nun encodeter String
             String encodedImage = encodeImage(bitmap);
 
-//            Toast.makeText(getApplicationContext(), encodedImage, Toast.LENGTH_SHORT).show();
-            PostMessage imgP= new PostMessage(benutzername,passwort,user,"1",encodedImage);
+            PostMessage imgP= new PostMessage(benutzername, passwort, user,"imageMessage", encodedImage);
+            PostAnswer imagePost = new PostAnswer(benutzername, passwort, user);
 
             sendMessage(imgP);
 
+            getMessages(imagePost);
         }
     }
 
@@ -359,12 +360,17 @@ public class ChatActivity extends AppCompatActivity {
                             String [] parts = responsePost.getData().get(i).getData().split("x");
                             String part1 = parts[0];
                             String part2 = parts[1];
-                            messageList.add(new Message(benutzername + "-Standort", true, part1, part2));
+                            messageList.add(new Message(benutzername + "-Standort", true, part1, part2, ""));
+                        }
+
+                        //Bild Nachricht
+                        else if (responsePost.getData().get(i).getMimeType().equals("imageMessage")) {
+                            messageList.add(new Message(benutzername + "-Bild", true, "", "", responsePost.getData().get(i).getData()));
                         }
 
                         //Text Nachricht
                         else {
-                            messageList.add(new Message(text, true, "", ""));
+                            messageList.add(new Message(text, true, "", "", ""));
                         }
                     }
 
@@ -378,12 +384,17 @@ public class ChatActivity extends AppCompatActivity {
                             String [] parts = responsePost.getData().get(i).getData().split("x");
                             String part1 = parts[0];
                             String part2 = parts[1];
-                            messageList.add(new Message(user + "-Standort", false, part1, part2));
+                            messageList.add(new Message(user + "-Standort", false, part1, part2, ""));
+                        }
+
+                        //Bild Nachricht
+                        else if (responsePost.getData().get(i).getMimeType().equals("imageMessage")) {
+                            messageList.add(new Message(user + "-Bild", false, "", "", responsePost.getData().get(i).getData()));
                         }
 
                         //Text Nachricht
                         else {
-                            messageList.add(new Message(text, false, "", ""));
+                            messageList.add(new Message(text, false, "", "", ""));
                         }
                     }
 
@@ -406,9 +417,17 @@ public class ChatActivity extends AppCompatActivity {
                         //wenn GPS ist
                         if (!messageList.get(position).getX().equals("")) {
                             String gpsUri= "http://maps.google.com/maps?daddr=" + messageList.get(position).getX() + "," + messageList.get(position).getY();
-                            Intent intentGps = new Intent (Intent.ACTION_VIEW,Uri.parse(gpsUri));
+                            Intent intentGps = new Intent(Intent.ACTION_VIEW,Uri.parse(gpsUri));
                             startActivity(intentGps);
                         }
+
+                        //wenn Image ist
+                        /*else if (!messageList.get(position).getPic().equals("")) {
+                            Intent imageIntent = new Intent();
+                            imageIntent.setAction(Intent.ACTION_GET_CONTENT);
+                            imageIntent.setType("image/*");
+                            startActivityForResult(imageIntent.createChooser(imageIntent, "Wähle ein Foto"), 30);
+                        }*/
                     }
                 });
 
@@ -438,6 +457,29 @@ public class ChatActivity extends AppCompatActivity {
         benutzername = sharedPreferences.getString(PALAVER_ID, "");
         passwort = sharedPreferences.getString(PALAVER_PW, "");
 
+    }
+
+
+
+    private void saveMessagelist() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+
+        String json = gson.toJson(messageList);
+
+        editor.putString(MESSAGE_LIST, json);
+        editor.apply();
+
+    }
+
+    private void loadMessagelist() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        Gson gson = new Gson();
+
+        String json = sharedPreferences.getString(MESSAGE_LIST, "");
+        Type type = new TypeToken<ArrayList<Friend>>() {}.getType();
+        messageList = gson.fromJson(json, type);
     }
 
 

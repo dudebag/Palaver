@@ -9,12 +9,15 @@ public class Message {
     private String x;
     private String y;
 
+    private String pic;
 
-    public Message(String text, boolean own, String x, String y) {
+
+    public Message(String text, boolean own, String x, String y, String pic) {
         this.text = text;
         this.own = own;
         this.x = x;
         this.y = y;
+        this.pic = pic;
     }
 
     public String getText() {
@@ -47,5 +50,13 @@ public class Message {
 
     public void setY(String y) {
         this.y = y;
+    }
+
+    public String getPic() {
+        return pic;
+    }
+
+    public void setPic(String pic) {
+        this.pic = pic;
     }
 }
