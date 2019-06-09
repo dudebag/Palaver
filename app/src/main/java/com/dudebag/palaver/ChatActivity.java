@@ -52,6 +52,7 @@ public class ChatActivity extends AppCompatActivity {
     public static final String PALAVER_ID = "palaver_id";
     public static final String PALAVER_PW = "palaver_pw";
 
+
     ImageButton button;
     ImageButton fileSelectbtn;
 
@@ -66,7 +67,6 @@ public class ChatActivity extends AppCompatActivity {
     JsonApi jsonApi;
  //StorageReference a;
     ArrayList<Message> messageList;
-    ArrayList<String> testList;
 
     PostAnswer responsePost;
     PostMessage responsePost2;
@@ -162,29 +162,22 @@ public class ChatActivity extends AppCompatActivity {
                     public void onLocationChanged(Location location) {
 
 
-                        // muss noch in nen onclick eingebaut werden, der nach dem click auf die scheisse in maps läd weil sonst macht der durchgehend
-                        String gpsUri= "http://maps.google.com/maps?daddr=" + location.getLatitude()+","
-                                                                            + location.getLongitude();
+                        PostMessage gpsString = new PostMessage(benutzername, passwort, user, "gpsMessage", location.getLatitude() + "x" + location.getLongitude());
+                        PostAnswer messages = new PostAnswer(benutzername, passwort, user);
 
-//                          Hardcoded Uni Adresse
-//                        String gpsUri= "http://maps.google.com/maps?daddr=" + "51.462980"+","
-//                                + "7.006340";
+                        sendMessage(gpsString);
+                        getMessages(messages);
+                        /*String gpsUri= "http://maps.google.com/maps?daddr=" + location.getLatitude()+","
+                                                                            + location.getLongitude();*/
 
-                        Intent intentGps = new Intent (Intent.ACTION_VIEW,Uri.parse(gpsUri));
-                        startActivity(intentGps);
-
-
-
-
-//                        String gps = "\n" + location.getLatitude() + "" + location.getLongitude();
-
-
-
-//                        Toast.makeText(getApplicationContext(), gps, Toast.LENGTH_SHORT).show();
 //
-//                        String uri = String.format(Locale.ENGLISH, "geo:%f,%f", location.getLatitude(), location.getLatitude());
-//                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-//                        startActivity(intent);
+                        //Intent intentGps = new Intent (Intent.ACTION_VIEW,Uri.parse(gpsUri));
+                        //startActivity(intentGps);
+
+
+
+
+//
                     }
 
                     @Override
@@ -311,7 +304,11 @@ public class ChatActivity extends AppCompatActivity {
                     return;
                 }
 
+                if (responsePost2 == null)
+                    return;
+
                 responsePost2 = response.body();
+
 
                 if (responsePost2.getMsgType() == 1) {
                     Toast.makeText(getApplicationContext(), "MsgType: " + responsePost2.getMsgType() + "\n" + "Info: " + responsePost2.getInfo(), Toast.LENGTH_SHORT).show();
@@ -328,7 +325,7 @@ public class ChatActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "3: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 else
                     Toast.makeText(getApplicationContext(), "4: " + t.getMessage(), Toast.LENGTH_SHORT).show();*/
-                Toast.makeText(getApplicationContext(), getString(R.string.error) + t.getMessage(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), getString(R.string.error) + t.getMessage(), Toast.LENGTH_SHORT).show();
                 return;
 
             }
@@ -349,49 +346,45 @@ public class ChatActivity extends AppCompatActivity {
                     return;
                 }
 
-                responsePost = response.body();
-
-                if (response.body().isEmpty())
+                if (response.body() == null || response.body().isEmpty())
                     return;
 
+                responsePost = response.body();
+
                 messageList.clear();
-                int mime;
-                mime = (int) response.body().getMsgType();
-
-
-                switch (mime){
-
-                    case 1:
-                        String imgS= response.message();
-
-
-//                        byte[] decodedString = Base64.decode(encodedImage,Base64.DEFAULT);
-//                        Bitmap decodedBit = BitmapFactory.decodeByteArray(decodedString,0,decodedString.length);
-//
-//                        // Toast.makeText(getApplicationContext(), "es sollte gleich kommen", Toast.LENGTH_SHORT).show();
-//
-//                        imgView.setImageBitmap(decodedBit);
 
 
 
-                    default:
 
-                        for (int i = 0; i < responsePost.getData().size(); i++) {
+                for (int i = 0; i < responsePost.getData().size(); i++) {
 
-                            String text = responsePost.getData().get(i).getData();
+                    String text = responsePost.getData().get(i).getData();
 
-                            //wenn Nachricht von uns selbst geschrieben
-                            if (responsePost.getData().get(i).getSender().equals(benutzername)) {
-                                messageList.add(new Message(text, true));
-                            }
-                            //Nachricht von dem anderen geschrieben
-                            else {
-                                messageList.add(new Message(text, false));
-                            }
+                    //wenn Nachricht von uns selbst geschrieben
+                    if (responsePost.getData().get(i).getSender().equals(benutzername)) {
 
+                        if (responsePost.getData().get(i).getMimeType().equals("gpsMessage")) {
 
+                            String [] parts = responsePost.getData().get(i).getData().split("x");
+                            String part1 = parts[0];
+                            String part2 = parts[1];
+                            messageList.add(new Message(text, true, part1, part2));
                         }
+                    }
+                    //Nachricht von dem anderen geschrieben
+                    else {
+                        if (responsePost.getData().get(i).getMimeType().equals("gpsMessage")) {
+
+                            String [] parts = responsePost.getData().get(i).getData().split("x");
+                            String part1 = parts[0];
+                            String part2 = parts[1];
+                            messageList.add(new Message(text, false, part1, part2));
+                        }
+                    }
+
+
                 }
+
 
 
                 mRecyclerView = findViewById(R.id.private_messages);
@@ -430,6 +423,8 @@ public class ChatActivity extends AppCompatActivity {
         passwort = sharedPreferences.getString(PALAVER_PW, "");
 
     }
+
+
 
 
 }

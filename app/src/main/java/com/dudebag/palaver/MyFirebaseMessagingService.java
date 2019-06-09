@@ -38,7 +38,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public static final String PUSHTOKEN = "pushtoken";
     public static final String CHANNEL_ID = "channel_id";
 
-    public static int NOTIFICATION_ID = 1;
 
 
     public MyFirebaseMessagingService() {
