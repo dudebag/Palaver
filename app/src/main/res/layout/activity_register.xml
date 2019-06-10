@@ -13,8 +13,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:onClick="hideKeyboard">
-    </FrameLayout>
+        android:onClick="hideKeyboard"></FrameLayout>
 
 
 
@@ -30,12 +29,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight="3"
+            android:layout_weight="5"
             android:layout_gravity="center"
             android:fontFamily="@font/quicksand_bold"
             android:text="Registrieren"
             android:textColor="#0F0F0F"
             android:textSize="32dp"
+            android:padding="8dp"
             />
 
         <TextView
@@ -48,8 +48,9 @@
             android:text="Bitte füllen Sie alle Felder aus"
             android:textAlignment="center"
             android:textColor="#3A3A3A"
-            android:textSize="18dp"
-            android:paddingLeft="16dp"/>
+            android:textSize="20dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"/>
 
         <EditText
             android:id="@+id/reg_Benutzername"

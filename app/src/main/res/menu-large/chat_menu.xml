@@ -9,16 +9,6 @@
         android:title="Image"
         app:showAsAction="never"/>
 
-    <item   android:id="@+id/data_menu"
-        android:title="Daten"
-        app:showAsAction="never"/>
 
-    <item   android:id="@+id/video_menu"
-        android:title="Daten"
-        app:showAsAction="never"/>
-
-    <item   android:id="@+id/speech_menu"
-        android:title="Daten"
-        app:showAsAction="never"/>
 
 </menu>

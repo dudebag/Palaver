@@ -27,40 +27,26 @@
         android:orientation="horizontal"
         >
 
-        <ImageButton
-            android:id="@+id/file_slct_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_alignTop="@+id/chat_linear_layout"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
 
-            android:src= "@drawable/ic_file_selection"
-
-            />
 
         <EditText
             android:id="@+id/input_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Nachricht"
-            android:padding="16dp"
+            android:padding="24dp"
             android:layout_marginLeft="8dp"
-            android:layout_weight="10"
+            android:layout_weight="1"
+            android:textSize="24dp"
             />
 
         <ImageButton
             android:id="@+id/send_msg_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginRight="8dp"
-
+            android:layout_weight="0.1"
+           android:layout_margin="8dp"
+            android:padding="24dp"
             android:layout_alignEnd="@+id/chat_linear_layout"
             android:src="@drawable/ic_send_message_icon" />
 

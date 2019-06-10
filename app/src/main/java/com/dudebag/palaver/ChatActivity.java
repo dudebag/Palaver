@@ -108,7 +108,7 @@ public class ChatActivity extends AppCompatActivity {
         jsonApi = retrofit.create(JsonApi.class);
 
         editText = findViewById(R.id.input_message);
-        fileSelectbtn = findViewById(R.id.file_slct_btn);
+       // fileSelectbtn = findViewById(R.id.file_slct_btn);
         button = findViewById(R.id.send_msg_btn);
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -169,7 +169,7 @@ public class ChatActivity extends AppCompatActivity {
 
                         sendMessage(gpsString);
                         getMessages(messages);
-
+                        return;
                     }
 
                     @Override
@@ -205,7 +205,8 @@ public class ChatActivity extends AppCompatActivity {
 
                 }
                 if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED) {
-                    locationManager.requestLocationUpdates("gps", 0, 3, locationListener);
+                    locationManager.requestLocationUpdates("gps", 5000, 50, locationListener);
+                    return true;
                 }
 
                 return true;
@@ -238,7 +239,7 @@ public class ChatActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
 
                     //KEIN FEHLER NICHT RESOLVEN ist in Ordnung, dass rot angezeigt wird
-                    locationManager.requestLocationUpdates("gps", 0, 3, locationListener);
+                    locationManager.requestLocationUpdates("gps", 5000, 50, locationListener);
                 return;
 
         }

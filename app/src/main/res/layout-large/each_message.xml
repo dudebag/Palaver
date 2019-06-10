@@ -18,9 +18,14 @@
             android:textSize="32dp"
             android:textStyle="bold"
             android:fontFamily="@font/quicksand_book"
-            android:textColor="@android:color/black"/>
+            android:textColor="@android:color/black"
+            android:padding="8dp"/>/>
 
-
+        <ImageView
+            android:id="@+id/image_placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"/>
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

@@ -34,7 +34,7 @@
             android:fontFamily="@font/quicksand_bold"
             android:text="Login"
             android:textColor="#0F0F0F"
-            android:textSize="64dp"
+            android:textSize="72dp"
             android:layout_marginTop="32dp"
             android:layout_marginBottom="32dp"
             android:padding="16dp"/>
