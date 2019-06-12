@@ -131,6 +131,13 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        editText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount()-1);
+            }
+        });
+
         messageList = new ArrayList<>();
 
 
@@ -142,7 +149,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
-    //oben rechts optionsmenü mit benutzer hinzufügen
+    //oben rechts optionsmenü mit benutzer hinzufügen usw.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -170,6 +177,7 @@ public class ChatActivity extends AppCompatActivity {
                         sendMessage(gpsString);
                         getMessages(messages);
                         return;
+
                     }
 
                     @Override
@@ -402,35 +410,63 @@ public class ChatActivity extends AppCompatActivity {
 
                 }
 
+                //wenn zum ersten Mal der Screen erstellt wird
+                if (mAdapter == null) {
+                    Toast.makeText(getApplicationContext(), "HALUL", Toast.LENGTH_SHORT).show();
 
-                mRecyclerView = findViewById(R.id.private_messages);
-                mRecyclerView.setHasFixedSize(true);
-                mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                mAdapter = new MessageAdapter(messageList);
+                    mRecyclerView = findViewById(R.id.private_messages);
+                    mRecyclerView.setHasFixedSize(true);
+                    mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    mAdapter = new MessageAdapter(messageList);
 
 
-                mRecyclerView.setLayoutManager(mLayoutManager);
-                mRecyclerView.setAdapter(mAdapter);
+                    mRecyclerView.setLayoutManager(mLayoutManager);
+                    mRecyclerView.setAdapter(mAdapter);
 
-                mAdapter.setOnItemClickListener(new MessageAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(int position) {
-                        //wenn GPS ist
-                        if (!messageList.get(position).getX().equals("")) {
-                            String gpsUri= "http://maps.google.com/maps?daddr=" + messageList.get(position).getX() + "," + messageList.get(position).getY();
-                            Intent intentGps = new Intent(Intent.ACTION_VIEW,Uri.parse(gpsUri));
-                            startActivity(intentGps);
-                        }
 
-                        //wenn Image ist
+
+                    if (!messageList.isEmpty()) {
+                        mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount()-1);
+                    }
+
+                    mAdapter.setOnItemClickListener(new MessageAdapter.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(int position) {
+                            //wenn GPS ist
+                            if (!messageList.get(position).getX().equals("")) {
+                                String gpsUri= "http://maps.google.com/maps?daddr=" + messageList.get(position).getX() + "," + messageList.get(position).getY();
+                                Intent intentGps = new Intent(Intent.ACTION_VIEW,Uri.parse(gpsUri));
+                                startActivity(intentGps);
+                            }
+
+                            //wenn Image ist
                         /*else if (!messageList.get(position).getPic().equals("")) {
                             Intent imageIntent = new Intent();
                             imageIntent.setAction(Intent.ACTION_GET_CONTENT);
                             imageIntent.setType("image/*");
                             startActivityForResult(imageIntent.createChooser(imageIntent, "Wähle ein Foto"), 30);
                         }*/
+                        }
+                    });
+
+                }
+
+                else {
+
+                    mAdapter.notifyDataSetChanged();
+
+                    mRecyclerView.setAdapter(mAdapter);
+
+                    if (!messageList.isEmpty()) {
+                        mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount()-1);
                     }
-                });
+
+                    Toast.makeText(getApplicationContext(), "SOHNEMANN", Toast.LENGTH_SHORT).show();
+
+
+                }
+
+
 
 
                 return;

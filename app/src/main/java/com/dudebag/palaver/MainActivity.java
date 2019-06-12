@@ -331,6 +331,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void createRecycler(ArrayList<Friend> arrayList) {
+
+    }
 
 
     private void refreshToken(Pushtoken pushtoken) {
@@ -349,7 +352,7 @@ public class MainActivity extends AppCompatActivity {
                 Pushtoken responseBody3 = response.body();
 
                 if (responseBody3.getMsgType() == 1) {
-                    Toast.makeText(getApplicationContext(), responseBody3.getInfo(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), responseBody3.getInfo(), Toast.LENGTH_SHORT).show();
                     return;
                 }
 

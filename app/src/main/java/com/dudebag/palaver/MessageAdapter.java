@@ -84,12 +84,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         }
 
         //GPS
-        if (!mMessageList.get(position).getX().equals("")) {
+        /*if (!mMessageList.get(position).getX().equals("")) {
             holder.mTextView.setTextColor(Color.parseColor("#FF6B00"));
-        }
+        }*/
 
         //Image
-        else if (!mMessageList.get(position).getPic().equals("")) {
+        if (!mMessageList.get(position).getPic().equals("")) {
 
             byte[] decodeMap = Base64.decode(mMessageList.get(position).getPic(), Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodeMap, 0, decodeMap.length);
@@ -100,6 +100,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
 
         holder.mTextView.setText(currentMessage.getText());
+        holder.setIsRecyclable(false);
 
     }
 
