@@ -84,7 +84,8 @@ public class ChatActivity extends AppCompatActivity {
 
     private Uri fileUri;
     private   InputStream imageStream = null;
-
+    boolean gpsSent;
+    boolean imageSent;
 
 
     @Override
@@ -165,6 +166,7 @@ public class ChatActivity extends AppCompatActivity {
                     // zurzeit wird GPS als Toast gesendet
             case R.id.gps:
 
+                gpsSent = false;
                 locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
                 locationListener = new LocationListener() {
                     @Override
@@ -212,7 +214,8 @@ public class ChatActivity extends AppCompatActivity {
 
 
                 }
-                if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED) {
+                if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED && !gpsSent) {
+                    gpsSent = true;
                     locationManager.requestLocationUpdates("gps", 5000, 50, locationListener);
                     return true;
                 }
@@ -223,6 +226,7 @@ public class ChatActivity extends AppCompatActivity {
 
            case R.id.image_menu:
 
+               imageSent = false;
                Intent intent = new Intent();
                intent.setAction(Intent.ACTION_GET_CONTENT);
                intent.setType("image/*");
@@ -244,8 +248,8 @@ public class ChatActivity extends AppCompatActivity {
 
         switch (requestCode) {
             case 10:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && !gpsSent)
+                    gpsSent =true;
                     //KEIN FEHLER NICHT RESOLVEN ist in Ordnung, dass rot angezeigt wird
                     locationManager.requestLocationUpdates("gps", 5000, 50, locationListener);
                 return;
@@ -272,12 +276,16 @@ public class ChatActivity extends AppCompatActivity {
             //Image ist nun encodeter String
             String encodedImage = encodeImage(bitmap);
 
-            PostMessage imgP= new PostMessage(benutzername, passwort, user,"imageMessage", encodedImage);
-            PostAnswer imagePost = new PostAnswer(benutzername, passwort, user);
+            if(!imageSent) {
 
-            sendMessage(imgP);
+                PostMessage imgP = new PostMessage(benutzername, passwort, user, "imageMessage", encodedImage);
+                PostAnswer imagePost = new PostAnswer(benutzername, passwort, user);
 
-            getMessages(imagePost);
+                sendMessage(imgP);
+
+                getMessages(imagePost);
+                imageSent=true;
+            }
         }
     }
 
