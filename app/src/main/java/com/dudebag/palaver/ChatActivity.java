@@ -18,10 +18,12 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
@@ -37,13 +39,19 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Random;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -88,6 +96,8 @@ public class ChatActivity extends AppCompatActivity {
     private   InputStream imageStream = null;
     boolean gpsSent;
     boolean imageSent;
+
+    private Bitmap bitBild;
 
     public HashMap<String, ArrayList<Message>> map;
 
@@ -399,7 +409,12 @@ public class ChatActivity extends AppCompatActivity {
                     locationManager.requestLocationUpdates("gps", 5000, 50, locationListener);
                 }
                 return;
+            case 40:
+                if(grantResults.length>0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){
+                    storeImage(bitBild);
+                }
 
+                return;
         }
 
 
@@ -600,10 +615,36 @@ public class ChatActivity extends AppCompatActivity {
                                 startActivity(intentGps);
                             }
 
+                            //wenn Image ist
+                        else if (!messageList.get(position).getPic().equals("")) {
+                           //     Toast.makeText(getApplicationContext(),"Deine Mudda is in da house",Toast.LENGTH_SHORT).show();
+                            String pic = messageList.get(position).getPic();
+                            byte[] decodedS = Base64.decode(pic,Base64.DEFAULT);
+                            Bitmap mapPic = BitmapFactory.decodeByteArray(decodedS,0,decodedS.length);
+                            bitBild = mapPic;
 
+
+                                if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                     Toast.makeText(getApplicationContext(),"Test10",Toast.LENGTH_SHORT).show();
+
+                                    requestPermissions(new String[]{
+
+
+                                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+
+
+                                    }, 40);
+                                }
+
+                                if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED ) {
+                                   //saveImage(mapPic);
+
+                                   storeImage(mapPic);
+                                }
+                        }
                         }
                     });
-
 
                 }
 
@@ -678,8 +719,46 @@ public class ChatActivity extends AppCompatActivity {
         Type type = new TypeToken<HashMap<String, ArrayList<Message>>>() {}.getType();
         map = gson.fromJson(json, type);
     }
+    private void storeImage(Bitmap image) {
+        File pictureFile = getOutputMediaFile();
+        if (pictureFile == null) {
+            Log.d("TAG",
+                    "Error creating media file, check storage permissions: ");// e.getMessage());
+            return;
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            image.compress(Bitmap.CompressFormat.PNG, 90, fos);
+            fos.close();
+        } catch (FileNotFoundException e) {
+            Log.d("TAG", "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Log.d("TAG", "Error accessing file: " + e.getMessage());
+        }
+         Toast.makeText(getApplicationContext(),"Bild erfolgreich gespeichert!",Toast.LENGTH_SHORT).show();
+    }
+    private  File getOutputMediaFile(){
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
 
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory()
+                + "/Pictures");
 
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
 
+        // Create the storage directory if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                return null;
+            }
+        }
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new Date());
+        File mediaFile;
+        String mImageName="MI_"+ timeStamp +".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+        return mediaFile;
+    }
 
 }
