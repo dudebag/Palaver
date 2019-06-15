@@ -322,18 +322,19 @@ public class ChatActivity extends AppCompatActivity {
 
                         sendMessage(gpsString);
                         getMessages(messages);
+                        mAdapter.notifyDataSetChanged();
                         return;
 
                     }
 
                     @Override
                     public void onStatusChanged(String s, int i, Bundle bundle) {
-                        Toast.makeText(ChatActivity.this, "AAAAAAA", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ChatActivity.this, "AAAAAAA", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onProviderEnabled(String s) {
-                        Toast.makeText(ChatActivity.this, "EEEEEEEE", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(ChatActivity.this, "EEEEEEEE", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -430,6 +431,7 @@ public class ChatActivity extends AppCompatActivity {
 
                 getMessages(imagePost);
                 imageSent=true;
+                mAdapter.notifyDataSetChanged();
             }
         }
     }
@@ -453,8 +455,14 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<PostMessage> call, Response<PostMessage> response) {
                 if (!response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), getString(R.string.error) + response.message(), Toast.LENGTH_SHORT).show();
-                    return;
+                    if (response.message().trim().equalsIgnoreCase("Internal Server Error")) {
+                        Toast.makeText(getApplicationContext(), "Das Bild ist zu groß", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), getString(R.string.error) + response.message(), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                 }
 
                 if (responsePost2 == null)
