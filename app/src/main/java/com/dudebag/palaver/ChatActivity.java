@@ -42,7 +42,9 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -86,6 +88,10 @@ public class ChatActivity extends AppCompatActivity {
     private   InputStream imageStream = null;
     boolean gpsSent;
     boolean imageSent;
+
+    public HashMap<String, ArrayList<Message>> map;
+
+
 
 
     @Override
@@ -141,14 +147,152 @@ public class ChatActivity extends AppCompatActivity {
 
         messageList = new ArrayList<>();
 
+        map = new HashMap<>();
 
-        PostAnswer post = new PostAnswer(benutzername, passwort, user);
 
-        getMessages(post);
+        //Kein Internet
+        if (!checkInternet()) {
+
+            loadMessagelist();
+
+            //Wenn keine Map bisher gespeichert
+            if (map.isEmpty()) {
+                Toast.makeText(getApplicationContext(), "EKFHDSUHF", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
+            //Wenn Nachrichten für diesen User gespeichert
+            if (map.containsKey(user.toLowerCase())) {
+
+                //Toast.makeText(getApplicationContext(), "HIER 111", Toast.LENGTH_SHORT).show();
+
+                messageList = map.get(user.toLowerCase());
+
+                mRecyclerView = findViewById(R.id.private_messages);
+                mRecyclerView.setHasFixedSize(true);
+                mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                mAdapter = new MessageAdapter(messageList);
+
+
+                mRecyclerView.setLayoutManager(mLayoutManager);
+                mRecyclerView.setAdapter(mAdapter);
+
+
+
+                if (!messageList.isEmpty()) {
+                    mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount()-1);
+                }
+
+                mAdapter.setOnItemClickListener(new MessageAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+                        //wenn GPS ist
+                        if (!messageList.get(position).getX().equals("")) {
+                            String gpsUri= "http://maps.google.com/maps?daddr=" + messageList.get(position).getX() + "," + messageList.get(position).getY();
+                            Intent intentGps = new Intent(Intent.ACTION_VIEW,Uri.parse(gpsUri));
+                            startActivity(intentGps);
+                        }
+
+
+                    }
+                });
+
+            }
+
+            else {
+                //Toast.makeText(getApplicationContext(), "HIER 222", Toast.LENGTH_SHORT).show();
+            }
+
+
+
+        }
+
+
+        else {
+
+            loadMessagelist();
+            PostAnswer post = new PostAnswer(benutzername, passwort, user);
+            getMessages(post);
+
+        }
+
+
 
 
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        //Kein Internet
+        if (!checkInternet()) {
+
+            loadMessagelist();
+
+            //Wenn keine Map bisher gespeichert
+            if (map.isEmpty()) {
+                Toast.makeText(this, "JJJJ", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
+            //Wenn Nachrichten für diesen User gespeichert
+            if (map.containsKey(user.toLowerCase())) {
+
+                //Toast.makeText(this, "CHECK ICH NET", Toast.LENGTH_SHORT).show();
+
+                messageList = map.get(user.toLowerCase());
+
+                mRecyclerView = findViewById(R.id.private_messages);
+                mRecyclerView.setHasFixedSize(true);
+                mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                mAdapter = new MessageAdapter(messageList);
+
+
+                mRecyclerView.setLayoutManager(mLayoutManager);
+                mRecyclerView.setAdapter(mAdapter);
+
+
+
+                if (!messageList.isEmpty()) {
+                    mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount()-1);
+                }
+
+                mAdapter.setOnItemClickListener(new MessageAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+                        //wenn GPS ist
+                        if (!messageList.get(position).getX().equals("")) {
+                            String gpsUri= "http://maps.google.com/maps?daddr=" + messageList.get(position).getX() + "," + messageList.get(position).getY();
+                            Intent intentGps = new Intent(Intent.ACTION_VIEW,Uri.parse(gpsUri));
+                            startActivity(intentGps);
+                        }
+
+
+                    }
+                });
+
+            }
+
+            else {
+                //Toast.makeText(this, "WEINEN", Toast.LENGTH_SHORT).show();
+            }
+
+
+
+        }
+
+
+        else {
+
+            PostAnswer post = new PostAnswer(benutzername, passwort, user);
+            getMessages(post);
+
+        }
+
+    }
 
     //oben rechts optionsmenü mit benutzer hinzufügen usw.
     @Override
@@ -184,12 +328,12 @@ public class ChatActivity extends AppCompatActivity {
 
                     @Override
                     public void onStatusChanged(String s, int i, Bundle bundle) {
-
+                        Toast.makeText(ChatActivity.this, "AAAAAAA", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onProviderEnabled(String s) {
-
+                        Toast.makeText(ChatActivity.this, "EEEEEEEE", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -248,10 +392,11 @@ public class ChatActivity extends AppCompatActivity {
 
         switch (requestCode) {
             case 10:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && !gpsSent)
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && !gpsSent) {
                     gpsSent =true;
                     //KEIN FEHLER NICHT RESOLVEN ist in Ordnung, dass rot angezeigt wird
                     locationManager.requestLocationUpdates("gps", 5000, 50, locationListener);
+                }
                 return;
 
         }
@@ -369,7 +514,7 @@ public class ChatActivity extends AppCompatActivity {
                     String text = responsePost.getData().get(i).getData();
 
                     //wenn Nachricht von uns selbst geschrieben
-                    if (responsePost.getData().get(i).getSender().equals(benutzername)) {
+                    if (responsePost.getData().get(i).getSender().equalsIgnoreCase(benutzername)) {
 
                         //GPS Nachricht
                         if (responsePost.getData().get(i).getMimeType().equals("gpsMessage")) {
@@ -420,7 +565,7 @@ public class ChatActivity extends AppCompatActivity {
 
                 //wenn zum ersten Mal der Screen erstellt wird
                 if (mAdapter == null) {
-                    Toast.makeText(getApplicationContext(), "HALUL", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "HALUL", Toast.LENGTH_SHORT).show();
 
                     mRecyclerView = findViewById(R.id.private_messages);
                     mRecyclerView.setHasFixedSize(true);
@@ -447,15 +592,10 @@ public class ChatActivity extends AppCompatActivity {
                                 startActivity(intentGps);
                             }
 
-                            //wenn Image ist
-                        /*else if (!messageList.get(position).getPic().equals("")) {
-                            Intent imageIntent = new Intent();
-                            imageIntent.setAction(Intent.ACTION_GET_CONTENT);
-                            imageIntent.setType("image/*");
-                            startActivityForResult(imageIntent.createChooser(imageIntent, "Wähle ein Foto"), 30);
-                        }*/
+
                         }
                     });
+
 
                 }
 
@@ -463,18 +603,20 @@ public class ChatActivity extends AppCompatActivity {
 
                     mAdapter.notifyDataSetChanged();
 
-                    mRecyclerView.setAdapter(mAdapter);
+                    //mRecyclerView.setAdapter(mAdapter);
 
                     if (!messageList.isEmpty()) {
                         mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount()-1);
                     }
 
-                    Toast.makeText(getApplicationContext(), "SOHNEMANN", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "SOHNEMANN", Toast.LENGTH_SHORT).show();
 
 
                 }
 
 
+                map.put(user.toLowerCase(), messageList);
+                saveMessagelist();
 
 
                 return;
@@ -511,7 +653,7 @@ public class ChatActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
 
-        String json = gson.toJson(messageList);
+        String json = gson.toJson(map);
 
         editor.putString(MESSAGE_LIST, json);
         editor.apply();
@@ -523,8 +665,10 @@ public class ChatActivity extends AppCompatActivity {
         Gson gson = new Gson();
 
         String json = sharedPreferences.getString(MESSAGE_LIST, "");
-        Type type = new TypeToken<ArrayList<Friend>>() {}.getType();
-        messageList = gson.fromJson(json, type);
+        if (json.equals(""))
+            return;
+        Type type = new TypeToken<HashMap<String, ArrayList<Message>>>() {}.getType();
+        map = gson.fromJson(json, type);
     }
 
 
