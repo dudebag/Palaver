@@ -30,58 +30,57 @@
 
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight="10"
             android:layout_gravity="center"
+            android:layout_weight="10"
             android:fontFamily="@font/quicksand_bold"
+            android:padding="16dp"
             android:text="Registrieren"
             android:textColor="#0F0F0F"
-            android:textSize="64dp"
-            android:padding="16dp"/>
+            android:textSize="64dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight="3.5"
-            android:layout_marginTop="40dp"
             android:layout_gravity="center"
+            android:layout_marginTop="40dp"
+            android:layout_weight="3.5"
+            android:paddingLeft="16dp"
             android:text="Bitte füllen Sie alle Felder aus"
             android:textAlignment="center"
             android:textColor="#3A3A3A"
-            android:textSize="30dp"
-            android:paddingLeft="16dp"/>
+            android:textSize="30dp" />
 
         <EditText
             android:id="@+id/reg_Benutzername"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="5"
             android:layout_marginTop="40dp"
+            android:layout_weight="5"
             android:background="@drawable/bg_editext"
-            android:inputType="text"
             android:hint="Benutzername"
-            android:paddingLeft="32dp"
+            android:inputType="text"
             android:padding="16dp"
-            android:textSize="20dp"/>
+            android:paddingLeft="32dp"
+            android:textSize="20dp" />
 
         <EditText
             android:id="@+id/reg_Passwort"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="5"
             android:layout_marginTop="40dp"
+            android:layout_weight="5"
             android:background="@drawable/bg_editext"
-            android:inputType="textPassword"
             android:hint="Passwort"
+            android:inputType="textPassword"
             android:padding="16dp"
-            android:textSize="20dp"
-            />
+            android:textSize="20dp" />
 
         <Button
             android:id="@+id/reg_Register"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="6"
             android:layout_marginTop="40dp"
+            android:layout_weight="6"
             android:background="@drawable/bg_btn"
             android:text="Jetzt registrieren"
             android:textColor="#0F0F0F"
@@ -90,20 +89,20 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="6"
             android:layout_marginTop="80dp"
             android:layout_marginBottom="40dp"
+            android:layout_weight="6"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="24dp"
                 android:fontFamily="@font/quicksand_book"
                 android:text="Sie sind bereits registriert ?"
                 android:textColor="#0F0F0F"
                 android:textSize="24dp"
-                android:layout_marginLeft="280dp"
-                />
+             />
 
             <!-- Das wäre nur ein Text, kein Button
             <TextView
@@ -118,16 +117,15 @@
 
             <Button
                 android:id="@+id/reg_Login"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
-                android:layout_marginLeft="16dp"
+                android:layout_marginLeft="24dp"
                 android:background="@drawable/bg_btn"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp"
                 android:text="Login"
                 android:textColor="#0F0F0F"
-                android:textSize="32dp"
-                android:padding="8dp"
-              />
+                android:textSize="32dp" />
 
 
         </LinearLayout>
