@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String FROM_LOGIN = "from_login";
     public static final String FRIEND_LIST = "friend_list";
     public static final String PUSHTOKEN = "pushtoken";
+    public static final String MESSAGE_LIST = "message_list";
 
     String benutzername;
     String passwort;
@@ -408,6 +409,7 @@ public class MainActivity extends AppCompatActivity {
         editor.putString(PALAVER_PW, "");
         editor.putString(FRIEND_LIST, "");
         editor.putString(PUSHTOKEN, "");
+        editor.putString(MESSAGE_LIST, "");
         editor.putBoolean(LOGGED_IN, false);
         editor.putBoolean(FROM_LOGIN, false);
         loggedIn = false;

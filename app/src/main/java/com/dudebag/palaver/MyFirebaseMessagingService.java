@@ -20,7 +20,9 @@ import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
 
+import java.util.Map;
 import java.util.Random;
 
 import retrofit2.Call;
@@ -53,9 +55,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
 
 
-            if (remoteMessage != null)
-            //generateNotification(remoteMessage.getNotification().getBody(), remoteMessage.getNotification().getTitle());
-                generateNotification("Du hast eine neue Nachricht erhalten", "Palaver");
+            if (remoteMessage != null) {
+                generateNotification("Du hast eine neue Nachricht von " + remoteMessage.getData().get("sender") +  " erhalten", "Palaver");
+            }
 
             else {
                 Log.d(TAG, "PENISPUMPE");
