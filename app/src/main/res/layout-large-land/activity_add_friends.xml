@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_login"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".AddFriendActivity">
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:onClick="hideKeyboard">
+
+    </FrameLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg"
+        android:orientation="vertical">
+
+        <!-- Das hier in den linearlayout hier drüber reinmachen + auskommentierten linearlayout
+        android:layout_below="@+id/friendHeader"
+        -->
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="80dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginBottom="4dp"
+            android:layout_weight="2"
+            android:padding="16dp"
+            android:fontFamily="@font/quicksand_bold"
+            android:gravity="center"
+            android:text="Bitte gib den Namen deines Freundes an"
+            android:textColor="#0F0F0F"
+            android:textSize="39dp" />
+
+        <EditText
+            android:id="@+id/friendName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="80dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginBottom="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_editext"
+            android:hint="Name"
+            android:padding="16dp"
+            android:textSize="32dp"
+            />
+
+        <Button
+            android:id="@+id/addFriend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginBottom="40dp"
+            android:layout_weight="1.5"
+            android:background="@drawable/bg_btn"
+            android:text="Freund hinzufügen"
+            android:textSize="28dp"
+            android:padding="16dp"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>
