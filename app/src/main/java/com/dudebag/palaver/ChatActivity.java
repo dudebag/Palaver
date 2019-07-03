@@ -142,6 +142,12 @@ public class ChatActivity extends AppCompatActivity {
                 PostAnswer post = new PostAnswer(benutzername, passwort, user);
 
                 sendMessage(post2);
+                try {
+                    Thread.sleep(500);
+                }
+                catch (InterruptedException e) {
+                    Toast.makeText(getApplicationContext(), "SERVER IST ZU LANGSAM", Toast.LENGTH_LONG).show();
+                }
                 getMessages(post);
 
                 editText.setText("");
@@ -331,6 +337,12 @@ public class ChatActivity extends AppCompatActivity {
                         PostAnswer messages = new PostAnswer(benutzername, passwort, user);
 
                         sendMessage(gpsString);
+                        try {
+                            Thread.sleep(500);
+                        }
+                        catch (InterruptedException e) {
+                            Toast.makeText(getApplicationContext(), "SERVER IST ZU LANGSAM", Toast.LENGTH_LONG).show();
+                        }
                         getMessages(messages);
                         mAdapter.notifyDataSetChanged();
                         return;
@@ -443,6 +455,13 @@ public class ChatActivity extends AppCompatActivity {
                 PostAnswer imagePost = new PostAnswer(benutzername, passwort, user);
 
                 sendMessage(imgP);
+
+                try {
+                    Thread.sleep(500);
+                }
+                catch (InterruptedException e) {
+                    Toast.makeText(getApplicationContext(), "SERVER IST ZU LANGSAM", Toast.LENGTH_LONG).show();
+                }
 
                 getMessages(imagePost);
                 imageSent=true;
@@ -587,11 +606,11 @@ public class ChatActivity extends AppCompatActivity {
                 }
 
                 //wenn zum ersten Mal der Screen erstellt wird
-                if (mAdapter == null) {
-                    //Toast.makeText(getApplicationContext(), "HALUL", Toast.LENGTH_SHORT).show();
+                //if (mAdapter == null) {
+                    //Toast.makeText(getApplicationContext(), "0000", Toast.LENGTH_SHORT).show();
 
                     mRecyclerView = findViewById(R.id.private_messages);
-                    mRecyclerView.setHasFixedSize(true);
+                    //mRecyclerView.setHasFixedSize(true);
                     mLayoutManager = new LinearLayoutManager(getApplicationContext());
                     mAdapter = new MessageAdapter(messageList);
 
@@ -646,11 +665,21 @@ public class ChatActivity extends AppCompatActivity {
                         }
                     });
 
-                }
+                //}
 
-                else {
+                /*else {
 
-                    mAdapter.notifyDataSetChanged();
+                    //Toast.makeText(getApplicationContext(), "1111", Toast.LENGTH_SHORT).show();
+                    //mAdapter = new MessageAdapter(messageList);
+                    mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    mAdapter = new MessageAdapter(messageList);
+                    mRecyclerView.setLayoutManager(mLayoutManager);
+                    mRecyclerView.setAdapter(mAdapter);
+                    mRecyclerView.getAdapter().notifyDataSetChanged();
+                    //mAdapter.notifyDataSetChanged();
+                    //mRecyclerView.setAdapter(new MessageAdapter(messageList));
+
+                    //Toast.makeText(getApplicationContext(), "2222", Toast.LENGTH_SHORT).show();
 
                     //mRecyclerView.setAdapter(mAdapter);
 
@@ -658,10 +687,11 @@ public class ChatActivity extends AppCompatActivity {
                         mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount()-1);
                     }
 
+                    //mAdapter.notifyDataSetChanged();
                     //Toast.makeText(getApplicationContext(), "SOHNEMANN", Toast.LENGTH_SHORT).show();
 
 
-                }
+                }*/
 
 
                 map.put(user.toLowerCase(), messageList);
