@@ -38,7 +38,7 @@
             android:gravity="center"
             android:text="Bitte gib den Namen deines Freundes an"
             android:textColor="#0F0F0F"
-            android:textSize="32dp"
+            android:textSize="24dp"
             android:padding="8dp"/>
 
         <EditText
